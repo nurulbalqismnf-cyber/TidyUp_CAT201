@@ -13,4 +13,3 @@ TidyUp is a Java-based e-commerce web application that allows users to book clea
 - HTML
 - CSS
 - JavaScript
-- Apache Tomcat
