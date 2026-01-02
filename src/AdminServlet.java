@@ -1,3 +1,8 @@
+package com.tidyup; 
+
+import java.io.*; // keep your existing imports
+// ... rest of your code
+
 // Inside AdminServlet.java
 protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     String action = request.getParameter("action"); // Optional if you have multiple forms
