@@ -39,10 +39,10 @@
                 <h4 class="card-title fw-bold text-dark">
                     <i class="fa-solid fa-address-book text-primary me-2"></i>My Customers
                 </h4>
-                <p class="text-muted small mb-0">List of unique customers from bookings</p>
+                <p class="text-muted small mb-0">Unique customers who have booked a service</p>
             </div>
             <span class="badge bg-primary rounded-pill">
-                <%= DataStore.getInstance().getBookings().size() %> Total Bookings
+                <%= DataStore.getInstance().getBookings().size() %> Total Orders
             </span>
         </div>
 
@@ -51,26 +51,26 @@
                 <thead class="table-light">
                 <tr>
                     <th>#</th>
-                    <th>Name</th>
+                    <th>Customer Name</th>
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
                 <%
-                    // Use a Set to avoid duplicate names
-                    Set<String> uniqueNames = new HashSet<>();
+                    // This logic filters out duplicates (so "John" only appears once)
+                    Set<String> uniqueCustomers = new HashSet<>();
                     int count = 1;
 
                     for(Booking b : DataStore.getInstance().getBookings()) {
-                        if(!uniqueNames.contains(b.getCustomerName())) {
-                            uniqueNames.add(b.getCustomerName());
+                        if(!uniqueCustomers.contains(b.getCustomerName())) {
+                            uniqueCustomers.add(b.getCustomerName());
                 %>
                 <tr>
                     <td><%= count++ %></td>
-                    <td class="fw-bold">
+                    <td class="fw-bold text-dark">
                         <div class="d-flex align-items-center">
-                            <div class="icon-box bg-blue-subtle me-3" style="width:35px; height:35px; margin-bottom:0; font-size:0.8rem;">
+                            <div class="icon-box bg-blue-subtle me-3" style="width: 35px; height: 35px; margin-bottom: 0; font-size: 0.8rem;">
                                 <i class="fa-solid fa-user"></i>
                             </div>
                             <%= b.getCustomerName() %>
@@ -85,7 +85,7 @@
                         } // End If
                     } // End Loop
 
-                    if (uniqueNames.isEmpty()) {
+                    if (uniqueCustomers.isEmpty()) {
                 %>
                 <tr><td colspan="4" class="text-center py-4 text-muted">No customers found yet.</td></tr>
                 <% } %>
