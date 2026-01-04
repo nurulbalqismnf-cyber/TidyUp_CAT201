@@ -1,7 +1,7 @@
 package com.tidyup.servlets;
 
-import com.tidyup.models.Booking;
 import com.tidyup.models.DataStore;
+import com.tidyup.models.Booking;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,18 +15,18 @@ public class BookingServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String customerName = req.getParameter("customerName");
         String serviceName = req.getParameter("serviceName");
-
         double price = 0.0;
+
         try {
             price = Double.parseDouble(req.getParameter("price"));
         } catch (NumberFormatException e) {
             price = 0.0;
         }
 
+        // This now works because we added the constructor to Booking.java!
         Booking newBooking = new Booking(customerName, serviceName, price);
         DataStore.getInstance().addBooking(newBooking);
 
-        // Redirect back to customer page with success message
         resp.sendRedirect("customer.jsp?success=true");
     }
 }

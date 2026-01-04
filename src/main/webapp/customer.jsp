@@ -54,5 +54,37 @@
     </div>
 </div>
 
+<body class="user-theme" style="background-color: #f0f4ff;">
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold" style="color: #4361ee;">My Tidy Space ✨</h1>
+        <p class="text-muted">Welcome back! Here is the status of your cleaning.</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm p-4 rounded-4">
+                <h5 class="fw-bold mb-4">My Bookings</h5>
+                <table class="table table-borderless">
+                    <thead class="text-muted small">
+                    <tr>
+                        <th>Service</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Basic Cleaning</td>
+                        <td><span class="badge rounded-pill bg-success-subtle text-success">Completed</span></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <a href="booking.jsp" class="btn btn-primary rounded-pill mt-3">Book New Service</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
 </body>
 </html>

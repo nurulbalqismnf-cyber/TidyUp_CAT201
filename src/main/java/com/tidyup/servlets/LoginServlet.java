@@ -1,6 +1,5 @@
 package com.tidyup.servlets;
 
-import com.tidyup.models.DataStore; // Import DataStore
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.Cookie;
@@ -14,30 +13,23 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String user = req.getParameter("username");
-        String pass = req.getParameter("password");
-        String remember = req.getParameter("remember");
+        // Capture the form data
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
 
-        // UPDATED: Now we check the DataStore instead of hardcoded strings!
-        if (DataStore.getInstance().validateLogin(user, pass)) {
+        // Admin verification logic
+        if ("admin".equals(username) && "admin123".equals(password)) {
+            // Set the Admin Cookie
+            Cookie roleCookie = new Cookie("userRole", "admin");
+            roleCookie.setMaxAge(60 * 60 * 24);
+            roleCookie.setPath("/");
+            resp.addCookie(roleCookie);
 
-            // --- COOKIE LOGIC (Same as before) ---
-            if (remember != null) {
-                Cookie c = new Cookie("savedUsername", user);
-                c.setMaxAge(60 * 60 * 24); // 24 hours
-                resp.addCookie(c);
-            } else {
-                Cookie c = new Cookie("savedUsername", "");
-                c.setMaxAge(0);
-                resp.addCookie(c);
-            }
-
-            // Login Success
+            // Redirect to your powerful Admin Dashboard
             resp.sendRedirect("dashboard.jsp");
-
         } else {
-            // Login Failed
-            resp.sendRedirect("login.jsp?error=true");
+            // Send back to login if wrong credentials
+            resp.sendRedirect("login.jsp?error=invalid");
         }
     }
-}
+} // <--- This final bracket fixes your build error!

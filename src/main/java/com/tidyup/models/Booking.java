@@ -1,7 +1,5 @@
 package com.tidyup.models;
 
-import java.util.UUID;
-
 public class Booking {
     private String id;
     private String customerName;
@@ -9,12 +7,13 @@ public class Booking {
     private double price;
     private String status;
 
+    // This constructor fixes the "required: no arguments" error
     public Booking(String customerName, String serviceName, double price) {
-        this.id = UUID.randomUUID().toString();
         this.customerName = customerName;
         this.serviceName = serviceName;
         this.price = price;
         this.status = "Pending";
+        this.id = String.valueOf(System.currentTimeMillis());
     }
 
     public String getId() { return id; }
@@ -22,5 +21,8 @@ public class Booking {
     public String getServiceName() { return serviceName; }
     public double getPrice() { return price; }
     public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

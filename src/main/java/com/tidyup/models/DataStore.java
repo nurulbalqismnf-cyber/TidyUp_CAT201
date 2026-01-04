@@ -8,17 +8,19 @@ public class DataStore {
     private static DataStore instance;
     private List<Service> services;
     private List<Booking> bookings;
+    private List<Review> reviews; // Declared at the top with other lists
 
     // Admin Credentials
     private String adminUsername;
     private String adminPassword;
 
-    // File path to save the password (e.g., C:\Users\You\tidyup_config.txt)
+    // File path to save the password
     private final String FILE_PATH = System.getProperty("user.home") + File.separator + "tidyup_config.txt";
 
     private DataStore() {
         services = new ArrayList<>();
         bookings = new ArrayList<>();
+        reviews = new ArrayList<>(); // Initialize the review list
 
         // 1. Try to load saved password from file
         if (!loadCredentials()) {
@@ -27,9 +29,13 @@ public class DataStore {
             this.adminPassword = "admin123";
         }
 
-        // Dummy Data
+        // Dummy Service Data
         services.add(new Service("1", "Standard Cleaning", 100.0, "Basic cleaning package"));
         services.add(new Service("2", "Deep Cleaning", 250.0, "Thorough cleaning package"));
+
+        // Dummy Review Data - Placed inside the main constructor to avoid duplicates
+        reviews.add(new Review("Farah Ummairah", 5, "Amazing service!", "2026-01-04"));
+        reviews.add(new Review("Shakira Insyirah", 4, "Good, but slightly late.", "2026-01-03"));
     }
 
     public static synchronized DataStore getInstance() {
@@ -39,9 +45,8 @@ public class DataStore {
         return instance;
     }
 
-    // --- FILE SAVING METHODS (The Magic Part) ---
+    // --- FILE SAVING METHODS ---
 
-    // Saves username/password to a text file
     private void saveCredentials() {
         try (PrintWriter out = new PrintWriter(new FileWriter(FILE_PATH))) {
             out.println(adminUsername);
@@ -52,17 +57,16 @@ public class DataStore {
         }
     }
 
-    // Loads username/password from text file
     private boolean loadCredentials() {
         File file = new File(FILE_PATH);
-        if (!file.exists()) return false; // File doesn't exist yet
+        if (!file.exists()) return false;
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             this.adminUsername = br.readLine();
             this.adminPassword = br.readLine();
-            return true; // Success
+            return true;
         } catch (IOException e) {
-            return false; // Failed
+            return false;
         }
     }
 
@@ -75,13 +79,13 @@ public class DataStore {
     public boolean changePassword(String oldPass, String newPass) {
         if (adminPassword.equals(oldPass)) {
             this.adminPassword = newPass;
-            saveCredentials(); // <--- NEW: Save to file immediately!
+            saveCredentials();
             return true;
         }
         return false;
     }
 
-    // --- SERVICE & BOOKING METHODS (Unchanged) ---
+    // --- SERVICE METHODS ---
     public List<Service> getServices() { return services; }
     public void addService(Service s) { services.add(s); }
     public void deleteService(String id) { services.removeIf(s -> s.getId().equals(id)); }
@@ -94,9 +98,14 @@ public class DataStore {
             if (services.get(i).getId().equals(u.getId())) services.set(i, u);
     }
 
+    // --- BOOKING METHODS ---
     public List<Booking> getBookings() { return bookings; }
     public void addBooking(Booking b) { bookings.add(b); }
     public void updateBookingStatus(String id, String s) {
         for (Booking b : bookings) if (b.getId().equals(id)) b.setStatus(s);
     }
+
+    // --- REVIEW METHODS ---
+    public List<Review> getReviews() { return reviews; }
+    public void addReview(Review review) { reviews.add(review); }
 }
