@@ -179,6 +179,24 @@
                     <small class="text-secondary opacity-75" style="font-size: 0.75rem;">Received: Yesterday</small>
                 </div>
             </div>
+
+                <div class="col-md-6">
+                    <div class="p-3 rounded-4 border bg-light h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold text-primary">Rabiatul Azzahra</span>
+                            <div class="text-warning small">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+                        </div>
+                        <p class="small text-muted mb-1">"5 star for the service. Literally like a new house."</p>
+                        <small class="text-secondary opacity-75" style="font-size: 0.75rem;">Received: 30 minute ago</small>
+                    </div>
+                </div>
+
         </div>
 
         <div class="text-center mt-4">
