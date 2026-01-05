@@ -6,8 +6,8 @@ public class Booking {
     private String serviceName;
     private double price;
     private String status;
-    private String date;        // You use this
-    private String time;        // You use this
+    private String date;
+    private String time;
     private String address;
 
     // This constructor fixes the "required: no arguments" error
@@ -33,6 +33,9 @@ public class Booking {
     public String getServiceName() { return serviceName; }
     public double getPrice() { return price; }
     public String getStatus() { return status; }
+    public String getDate() { return date; }
+    public String getTime() { return time; }
+    public String getAddress() { return address; }
 
     public void setStatus(String status) {
         this.status = status;
