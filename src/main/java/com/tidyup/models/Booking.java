@@ -6,6 +6,9 @@ public class Booking {
     private String serviceName;
     private double price;
     private String status;
+    private String date;        // You use this
+    private String time;        // You use this
+    private String address;
 
     // This constructor fixes the "required: no arguments" error
     public Booking(String customerName, String serviceName, double price) {
@@ -14,6 +17,15 @@ public class Booking {
         this.price = price;
         this.status = "Pending";
         this.id = String.valueOf(System.currentTimeMillis());
+    }
+
+    public Booking(String customerName, String serviceName, String date, String time, String address, String status) {
+        this.customerName = customerName;
+        this.serviceName = serviceName;
+        this.date = date;
+        this.time = time;
+        this.address = address;
+        this.status = status;
     }
 
     public String getId() { return id; }
