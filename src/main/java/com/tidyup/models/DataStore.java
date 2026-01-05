@@ -9,6 +9,7 @@ public class DataStore {
     private List<Service> services;
     private List<Booking> bookings;
     private List<Review> reviews; // Declared at the top with other lists
+    private List<User> users;
 
     // Admin Credentials
     private String adminUsername;
@@ -21,6 +22,7 @@ public class DataStore {
         services = new ArrayList<>();
         bookings = new ArrayList<>();
         reviews = new ArrayList<>(); // Initialize the review list
+        users = new ArrayList<>();
 
         // 1. Try to load saved password from file
         if (!loadCredentials()) {
@@ -36,6 +38,10 @@ public class DataStore {
         // Dummy Review Data - Placed inside the main constructor to avoid duplicates
         reviews.add(new Review("Farah Ummairah", 5, "Amazing service!", "2026-01-04"));
         reviews.add(new Review("Shakira Insyirah", 4, "Good, but slightly late.", "2026-01-03"));
+
+        //test data
+        users.add(new User("customer1", "123", "customer"));
+        users.add(new User("customer2", "abc", "customer"));
     }
 
     public static synchronized DataStore getInstance() {
@@ -44,6 +50,23 @@ public class DataStore {
         }
         return instance;
     }
+
+    // --- UNIFIED LOGIN METHOD ---
+    // This tells LoginServlet if it's the Admin or a Customer
+    public String checkLogin(String user, String pass) {
+        // 1. Check Admin
+        if (adminUsername.equals(user) && adminPassword.equals(pass)) {
+            return "admin";
+        }
+        // 2. Check Customers
+        for (User u : users) {
+            if (u.getUsername().equals(user) && u.getPassword().equals(pass)) {
+                return "customer";
+            }
+        }
+        return null; // Failed
+    }
+
 
     // --- FILE SAVING METHODS ---
 
@@ -103,6 +126,11 @@ public class DataStore {
     public void addBooking(Booking b) { bookings.add(b); }
     public void updateBookingStatus(String id, String s) {
         for (Booking b : bookings) if (b.getId().equals(id)) b.setStatus(s);
+    }
+
+    // --- NEW: Allow signing up ---
+    public void addUser(User u) {
+        this.users.add(u);
     }
 
     // --- REVIEW METHODS ---

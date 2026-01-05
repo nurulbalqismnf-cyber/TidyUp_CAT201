@@ -20,12 +20,14 @@ public class Booking {
     }
 
     public Booking(String customerName, String serviceName, String date, String time, String address, String status) {
+        this.id = String.valueOf(System.currentTimeMillis());
         this.customerName = customerName;
         this.serviceName = serviceName;
         this.date = date;
         this.time = time;
         this.address = address;
         this.status = status;
+        this.price = 0.0; // Customers don't set price
     }
 
     public String getId() { return id; }

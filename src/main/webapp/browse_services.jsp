@@ -8,46 +8,179 @@
 <%@ page import="java.util.List" %>
 <%@ page import="com.tidyup.models.Service" %>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Browse Services</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light p-4">
-<div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Available Services</h2>
-        <a href="UserBookingServlet?action=history" class="btn btn-outline-primary">View My History</a>
-    </div>
+    <style>
+        :root {
+            --primary-purple: #9b59b6;
+            --purple-hover: #8e44ad;
+            --light-purple-bg: #f8f0fc;
+            --dark-text: #5b3256;
+            --soft-shadow: 0 10px 30px rgba(155, 89, 182, 0.1);
+        }
 
-    <div class="row">
+        body {
+            background-color: var(--light-purple-bg);
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            color: var(--dark-text);
+            padding-bottom: 5rem;
+        }
+
+        /* Header Area */
+        .page-header {
+            background: white;
+            padding: 2rem 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            margin-bottom: 3rem;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+        }
+
+        h2.purple-heading {
+            color: var(--primary-purple);
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        /* Cards */
+        .service-card {
+            border: none;
+            border-radius: 25px;
+            box-shadow: var(--soft-shadow);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            background: white;
+            height: 100%;
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(155, 89, 182, 0.2);
+        }
+
+        .card-body { padding: 2rem; }
+
+        .price-tag {
+            color: var(--primary-purple);
+            font-weight: 800;
+            font-size: 1.2rem;
+            background: #f3e5f5;
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        /* Form Inputs */
+        .form-control {
+            border-radius: 12px;
+            border: 1px solid #e0d0e8;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+        }
+        .form-control:focus {
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 0 0.2rem rgba(155, 89, 182, 0.15);
+        }
+
+        /* Buttons */
+        .btn-purple {
+            background-color: var(--primary-purple);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px;
+            font-weight: 700;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        .btn-purple:hover {
+            background-color: var(--purple-hover);
+            transform: scale(1.02);
+        }
+
+        .btn-outline-purple {
+            color: var(--primary-purple);
+            border: 2px solid var(--primary-purple);
+            border-radius: 50px;
+            padding: 8px 20px;
+            font-weight: 700;
+            background: transparent;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .btn-outline-purple:hover {
+            background-color: var(--primary-purple);
+            color: white;
+        }
+
+        .btn-logout {
+            color: #e74c3c;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .btn-logout:hover { text-decoration: underline; }
+
+    </style>
+</head>
+<body>
+
+<div class="page-header text-center">
+    <div class="container d-flex justify-content-between align-items-center">
+        <h2 class="purple-heading m-0">Available Services</h2>
+        <div>
+            <a href="UserBookingServlet?action=history" class="btn-outline-purple me-2">View My History</a>
+            <a href="login.jsp" class="btn-logout">Logout</a>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row g-4">
         <%
             List<Service> services = (List<Service>) request.getAttribute("serviceList");
             if (services != null) {
                 for (Service s : services) {
         %>
-        <div class="col-md-4 mb-3">
-            <div class="card shadow-sm">
+        <div class="col-md-4">
+            <div class="card service-card">
                 <div class="card-body">
-                    <h5 class="card-title"><%= s.getName() %></h5>
-                    <p class="text-muted"><%= s.getDescription() %></p>
-                    <h6 class="text-primary fw-bold">Price: RM <%= s.getPrice() %></h6>
+                    <h4 class="fw-bold mb-2" style="color: #4a4a4a;"><%= s.getName() %></h4>
+                    <p class="text-muted small mb-3"><%= s.getDescription() %></p>
+
+                    <div class="price-tag">RM <%= s.getPrice() %></div>
 
                     <form action="UserBookingServlet" method="post" class="mt-3">
                         <input type="hidden" name="serviceName" value="<%= s.getName() %>">
-                        <input type="date" name="date" class="form-control mb-2" required>
-                        <input type="time" name="time" class="form-control mb-2" required>
-                        <input type="text" name="address" class="form-control mb-2" placeholder="Your Address" required>
-                        <button type="submit" class="btn btn-success w-100">Book Now</button>
+
+                        <label class="small text-muted fw-bold ms-1">Date</label>
+                        <input type="date" name="date" class="form-control" required>
+
+                        <label class="small text-muted fw-bold ms-1">Time</label>
+                        <input type="time" name="time" class="form-control" required>
+
+                        <label class="small text-muted fw-bold ms-1">Address</label>
+                        <input type="text" name="address" class="form-control" placeholder="Enter home address..." required>
+
+                        <button type="submit" class="btn btn-purple mt-3">Book Now</button>
                     </form>
                 </div>
             </div>
         </div>
         <%
-                }
             }
+        } else {
         %>
+        <div class="col-12 text-center">
+            <div class="alert alert-warning rounded-pill">No services found. Please check back later!</div>
+        </div>
+        <% } %>
     </div>
 </div>
+
 </body>
 </html>
