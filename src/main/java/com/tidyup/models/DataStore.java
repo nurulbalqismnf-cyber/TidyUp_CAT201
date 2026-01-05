@@ -40,8 +40,9 @@ public class DataStore {
         reviews.add(new Review("Shakira Insyirah", 4, "Good, but slightly late.", "2026-01-03"));
 
         //test data
-        users.add(new User("customer1", "123", "customer"));
-        users.add(new User("customer2", "abc", "customer"));
+        users.add(new User("Farah Ummairah", "123", "customer"));
+        users.add(new User("Shakira Insyirah", "122", "customer"));
+        users.add(new User("Rabiatul Azzahra", "123", "customer"));
     }
 
     public static synchronized DataStore getInstance() {
