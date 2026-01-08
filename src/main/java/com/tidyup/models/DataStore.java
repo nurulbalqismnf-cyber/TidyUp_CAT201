@@ -41,7 +41,7 @@ public class DataStore {
 
         //test data
         users.add(new User("Farah123", "123", "customer"));
-        users.add(new User("Shakira123", "122", "customer"));
+        users.add(new User("Shakira123", "123", "customer"));
         users.add(new User("Rabiatul123", "123", "customer"));
     }
 
