@@ -38,6 +38,8 @@
                 <h4 class="card-title fw-bold text-dark">
                     <i class="fa-solid fa-list-check text-primary me-2"></i>Incoming Bookings
                 </h4>
+                <p class="text-secondary small mb-2">This is a simple update for your first commit log.</p>
+
                 <%
                     String filter = request.getParameter("filter");
                     if("pending".equals(filter)) {
