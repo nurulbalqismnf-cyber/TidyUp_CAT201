@@ -16,6 +16,16 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script>
+        function confirmAction(action) {
+            if(action === 'complete') {
+                return confirm("Are you sure you want to mark this order as COMPLETED?");
+            } else if(action === 'cancel') {
+                return confirm("Are you sure you want to CANCEL this order?");
+            }
+            return true;
+        }
+    </script>
 </head>
 <body>
 
@@ -33,34 +43,55 @@
 <div class="container">
     <div class="card p-4">
 
-        <div class="card-header-custom d-flex justify-content-between align-items-center">
+        <!-- HEADER -->
+        <div class="card-header-custom d-flex justify-content-between align-items-center mb-3">
             <div>
                 <h4 class="card-title fw-bold text-dark">
                     <i class="fa-solid fa-list-check text-primary me-2"></i>Incoming Bookings
                 </h4>
-                <p class="text-secondary small mb-2">This is a simple update for your first commit log.</p>
-
                 <%
-                    String filter = request.getParameter("filter");
-                    if ("pending".equals(filter)) {
-                %>
-                <p class="text-danger small mb-0 fw-bold"><i class="fa-solid fa-filter me-1"></i> Showing Pending Jobs Only</p>
+                    String filterParam = request.getParameter("filter");
+                    if ("pending".equals(filterParam)) { %>
+                <p class="text-danger small mb-0 fw-bold">
+                    <i class="fa-solid fa-filter me-1"></i> Showing Pending Jobs Only
+                </p>
                 <% } else { %>
                 <p class="text-muted small mb-0">Manage all customer requests</p>
                 <% } %>
             </div>
 
-            <% if ("pending".equals(filter)) { %>
-            <a href="orders.jsp" class="btn btn-sm btn-outline-secondary rounded-pill">Show All</a>
-            <% } else { %>
-            <span class="badge bg-primary rounded-pill">
-                <%= DataStore.getInstance().getBookings().size() %> Total
-            </span>
+            <div>
+                <% if("pending".equals(filterParam)) { %>
+                <a href="orders.jsp" class="btn btn-sm btn-outline-secondary rounded-pill">Show All</a>
+                <% } else { %>
+                <span class="badge bg-primary rounded-pill">
+                        <%= DataStore.getInstance().getBookings().size() %> Total
+                    </span>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- SEARCH FORM -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <form class="d-flex" method="get" action="orders.jsp">
+                <input type="text" name="search" class="form-control me-2" placeholder="Search by customer or service"
+                       value="<%= request.getParameter("search") != null ? request.getParameter("search") : "" %>">
+                <% if(filterParam != null) { %>
+                <input type="hidden" name="filter" value="<%= filterParam %>">
+                <% } %>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+
+            <% if (request.getParameter("search") != null && !request.getParameter("search").isEmpty()) { %>
+            <a href="orders.jsp<%= filterParam != null ? "?filter=" + filterParam : "" %>" class="btn btn-secondary">
+                Clear Search
+            </a>
             <% } %>
         </div>
 
+        <!-- TABLE -->
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
+            <table class="table table-hover align-middle" style="cursor: pointer;">
                 <thead class="table-light">
                 <tr>
                     <th>#ID</th>
@@ -73,12 +104,20 @@
                 </thead>
                 <tbody>
                 <%
+                    String search = request.getParameter("search");
                     boolean foundAny = false;
                     for (Booking b : DataStore.getInstance().getBookings()) {
 
-                        // FILTER LOGIC: If looking for pending, hide completed jobs
-                        if ("pending".equals(filter) && !"Pending".equals(b.getStatus())) {
-                            continue;
+                        // FILTER LOGIC
+                        if ("pending".equals(filterParam) && !"Pending".equals(b.getStatus())) continue;
+
+                        // SEARCH LOGIC
+                        if (search != null && !search.trim().isEmpty()) {
+                            String lowerSearch = search.toLowerCase();
+                            if (!b.getCustomerName().toLowerCase().contains(lowerSearch) &&
+                                    !b.getServiceName().toLowerCase().contains(lowerSearch)) {
+                                continue;
+                            }
                         }
 
                         foundAny = true;
@@ -105,12 +144,15 @@
                             <input type="hidden" name="id" value="<%= b.getId() %>">
                             <button type="submit" name="action" value="complete"
                                     class="btn btn-outline-success btn-sm px-3 shadow-sm"
-                                    title="Mark as Done">
+                                    title="Mark as Done"
+                                    onclick="return confirmAction('complete');">
                                 <i class="fa-solid fa-square-check fa-lg"></i> Done
                             </button>
+
                             <button type="submit" name="action" value="cancel"
                                     class="btn btn-light text-danger btn-sm px-2 border ms-1"
-                                    title="Cancel Order">
+                                    title="Cancel Order"
+                                    onclick="return confirmAction('cancel');">
                                 <i class="fa-solid fa-xmark"></i>
                             </button>
                         </form>
@@ -125,7 +167,7 @@
                 <tr>
                     <td colspan="6" class="text-center py-5">
                         <div class="text-muted">
-                            <% if ("pending".equals(filter)) { %>
+                            <% if ("pending".equals(filterParam)) { %>
                             <div class="mb-3 p-3 bg-light rounded-circle d-inline-block">
                                 <i class="fa-solid fa-mug-hot fa-2x text-secondary"></i>
                             </div>
@@ -141,6 +183,7 @@
                 </tbody>
             </table>
         </div>
+
     </div>
 </div>
 

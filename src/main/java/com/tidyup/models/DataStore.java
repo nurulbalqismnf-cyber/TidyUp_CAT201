@@ -43,7 +43,13 @@ public class DataStore {
         users.add(new User("Farah123", "123", "customer"));
         users.add(new User("Shakira123", "123", "customer"));
         users.add(new User("Rabiatul123", "123", "customer"));
+
+        // --- TEMPORARY TEST BOOKINGS ---
+        bookings.add(new Booking("Farah123", "Standard Cleaning", "2026-01-12", "10:00", "123 Test St", "Pending"));
+        bookings.add(new Booking("Shakira123", "Deep Cleaning", "2026-01-13", "14:00", "456 Test Ave", "Pending"));
+
     }
+
 
     public static synchronized DataStore getInstance() {
         if (instance == null) {
