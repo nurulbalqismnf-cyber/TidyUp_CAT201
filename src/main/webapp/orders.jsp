@@ -88,7 +88,7 @@
 
                         foundAny = true;
                 %>
-                <tr>
+                <tr class="<%= "Pending".equals(b.getStatus()) ? "table-warning" : "" %>">
                     <td class="text-muted small">#<%= b.getId() %></td>
                     <td class="fw-bold text-dark"><%= b.getCustomerName() %></td>
                     <td><%= b.getServiceName() %></td>
