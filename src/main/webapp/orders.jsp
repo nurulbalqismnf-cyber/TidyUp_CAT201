@@ -7,7 +7,7 @@
 --%>
 <%@ page import="com.tidyup.models.DataStore" %>
 <%@ page import="com.tidyup.models.Booking" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,13 +39,10 @@
                     <i class="fa-solid fa-list-check text-primary me-2"></i>Incoming Bookings
                 </h4>
                 <p class="text-secondary small mb-2">This is a simple update for your first commit log.</p>
-                <p class="text-muted small mb-3">
-                    Last updated: January 2026
-                </p>
 
                 <%
                     String filter = request.getParameter("filter");
-                    if("pending".equals(filter)) {
+                    if ("pending".equals(filter)) {
                 %>
                 <p class="text-danger small mb-0 fw-bold"><i class="fa-solid fa-filter me-1"></i> Showing Pending Jobs Only</p>
                 <% } else { %>
@@ -53,17 +50,14 @@
                 <% } %>
             </div>
 
-            <% if("pending".equals(filter)) { %>
+            <% if ("pending".equals(filter)) { %>
             <a href="orders.jsp" class="btn btn-sm btn-outline-secondary rounded-pill">Show All</a>
             <% } else { %>
             <span class="badge bg-primary rounded-pill">
-                    <%= DataStore.getInstance().getBookings().size() %> Total
-                </span>
+                <%= DataStore.getInstance().getBookings().size() %> Total
+            </span>
             <% } %>
         </div>
-        <p class="text-muted small mb-2">
-            Click “Done” to complete an order or cancel if needed.
-        </p>
 
         <div class="table-responsive">
             <table class="table table-hover align-middle">
@@ -74,16 +68,17 @@
                     <th>Service</th>
                     <th>Price</th>
                     <th>Status</th>
-                    <th>Actions</th> </tr>
+                    <th>Mark Done</th>
+                </tr>
                 </thead>
                 <tbody>
                 <%
                     boolean foundAny = false;
-                    for(Booking b : DataStore.getInstance().getBookings()) {
+                    for (Booking b : DataStore.getInstance().getBookings()) {
 
-                        // FILTER LOGIC: If looking for pending, HIDE completed jobs
+                        // FILTER LOGIC: If looking for pending, hide completed jobs
                         if ("pending".equals(filter) && !"Pending".equals(b.getStatus())) {
-                            continue; // This makes the row "Gone"
+                            continue;
                         }
 
                         foundAny = true;
@@ -95,33 +90,24 @@
                     <td>RM <%= b.getPrice() %></td>
 
                     <td>
-                        <% if("Completed".equals(b.getStatus())) { %>
-                        <span class="badge bg-success-subtle text-success border border-success">
-    <i class="fa-solid fa-circle-check me-1"></i> Completed
-</span>
-                        <% } else if("Cancelled".equals(b.getStatus())) { %>
-                        <span class="badge bg-danger-subtle text-danger border border-danger">
-    <i class="fa-solid fa-circle-xmark me-1"></i> Cancelled
-</span>
+                        <% if ("Completed".equals(b.getStatus())) { %>
+                        <span class="badge bg-success-subtle text-success border border-success">Completed</span>
+                        <% } else if ("Cancelled".equals(b.getStatus())) { %>
+                        <span class="badge bg-danger-subtle text-danger border border-danger">Cancelled</span>
                         <% } else { %>
-                        <span class="badge bg-warning text-dark border border-warning">
-    <i class="fa-solid fa-clock me-1"></i> Pending
-</span>
+                        <span class="badge bg-warning text-dark border border-warning">Pending</span>
                         <% } %>
-
                     </td>
 
                     <td>
-                        <% if("Pending".equals(b.getStatus())) { %>
+                        <% if ("Pending".equals(b.getStatus())) { %>
                         <form action="orders" method="post" style="display:inline;">
                             <input type="hidden" name="id" value="<%= b.getId() %>">
-
                             <button type="submit" name="action" value="complete"
                                     class="btn btn-outline-success btn-sm px-3 shadow-sm"
                                     title="Mark as Done">
                                 <i class="fa-solid fa-square-check fa-lg"></i> Done
                             </button>
-
                             <button type="submit" name="action" value="cancel"
                                     class="btn btn-light text-danger btn-sm px-2 border ms-1"
                                     title="Cancel Order">
@@ -135,26 +121,28 @@
                 </tr>
                 <% } %>
 
-                <% if(!foundAny) { %>
+                <% if (!foundAny) { %>
                 <tr>
                     <td colspan="6" class="text-center py-5">
-                        <% if("pending".equals(filter)) { %>
                         <div class="text-muted">
+                            <% if ("pending".equals(filter)) { %>
                             <div class="mb-3 p-3 bg-light rounded-circle d-inline-block">
                                 <i class="fa-solid fa-mug-hot fa-2x text-secondary"></i>
                             </div>
                             <h5 class="fw-bold text-dark">All Caught Up!</h5>
                             <p class="small">No pending work. Time to relax.</p>
+                            <% } else { %>
+                            <div>No bookings found.</div>
+                            <% } %>
                         </div>
-                        <% } else { %>
-                        <div class="text-muted small">
-                            There are currently no customer bookings to display.
-                        </div>
-
-                        <% } %>
                     </td>
                 </tr>
                 <% } %>
                 </tbody>
             </table>
         </div>
+    </div>
+</div>
+
+</body>
+</html>
