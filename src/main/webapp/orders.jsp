@@ -140,7 +140,10 @@
                             <p class="small">No pending work. Time to relax.</p>
                         </div>
                         <% } else { %>
-                        <div class="text-muted">No bookings found.</div>
+                        <div class="text-muted small">
+                            There are currently no customer bookings to display.
+                        </div>
+
                         <% } %>
                     </td>
                 </tr>
