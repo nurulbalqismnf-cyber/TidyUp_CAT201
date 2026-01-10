@@ -25,10 +25,16 @@
             }
             return true;
         }
+
+        function sortBookings() {
+            const sortValue = document.getElementById("sortSelect").value;
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('sort', sortValue);
+            window.location.search = urlParams.toString();
+        }
     </script>
 </head>
 <body>
-
 <nav class="navbar navbar-dark mb-5">
     <div class="container">
         <span class="navbar-brand fw-bold">
@@ -42,56 +48,56 @@
 
 <div class="container">
     <div class="card p-4">
-
-        <!-- HEADER -->
         <div class="card-header-custom d-flex justify-content-between align-items-center mb-3">
             <div>
                 <h4 class="card-title fw-bold text-dark">
                     <i class="fa-solid fa-list-check text-primary me-2"></i>Incoming Bookings
                 </h4>
+                <p class="text-secondary small mb-2">Manage all customer requests efficiently.</p>
+
                 <%
-                    String filterParam = request.getParameter("filter");
-                    if ("pending".equals(filterParam)) { %>
+                    String filter = request.getParameter("filter");
+                    if ("pending".equals(filter)) {
+                %>
                 <p class="text-danger small mb-0 fw-bold">
                     <i class="fa-solid fa-filter me-1"></i> Showing Pending Jobs Only
                 </p>
-                <% } else { %>
-                <p class="text-muted small mb-0">Manage all customer requests</p>
                 <% } %>
             </div>
 
-            <div>
-                <% if("pending".equals(filterParam)) { %>
-                <a href="orders.jsp" class="btn btn-sm btn-outline-secondary rounded-pill">Show All</a>
+            <div class="d-flex align-items-center">
+                <% if ("pending".equals(filter)) { %>
+                <a href="orders.jsp" class="btn btn-sm btn-outline-secondary rounded-pill me-2">Show All</a>
                 <% } else { %>
-                <span class="badge bg-primary rounded-pill">
-                        <%= DataStore.getInstance().getBookings().size() %> Total
-                    </span>
+                <span class="badge bg-primary rounded-pill me-3">
+                    <%= DataStore.getInstance().getBookings().size() %> Total
+                </span>
                 <% } %>
+
+                <!-- SORT DROPDOWN -->
+                <select id="sortSelect" class="form-select form-select-sm me-2" style="width:auto;"
+                        onchange="sortBookings();">
+                    <option value="">Sort By</option>
+                    <option value="customer" <%= "customer".equals(request.getParameter("sort")) ? "selected" : "" %>>Customer Name</option>
+                    <option value="service" <%= "service".equals(request.getParameter("sort")) ? "selected" : "" %>>Service Name</option>
+                    <option value="date" <%= "date".equals(request.getParameter("sort")) ? "selected" : "" %>>Date</option>
+                    <option value="status" <%= "status".equals(request.getParameter("sort")) ? "selected" : "" %>>Status</option>
+                </select>
+
+                <!-- SEARCH FORM -->
+                <form method="get" class="d-flex">
+                    <input type="hidden" name="filter" value="<%= filter != null ? filter : "" %>">
+                    <input type="hidden" name="sort" value="<%= request.getParameter("sort") != null ? request.getParameter("sort") : "" %>">
+                    <input type="text" name="search" class="form-control form-control-sm me-2"
+                           placeholder="Search Customer or Service"
+                           value="<%= request.getParameter("search") != null ? request.getParameter("search") : "" %>">
+                    <button type="submit" class="btn btn-sm btn-primary">Search</button>
+                </form>
             </div>
         </div>
 
-        <!-- SEARCH FORM -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <form class="d-flex" method="get" action="orders.jsp">
-                <input type="text" name="search" class="form-control me-2" placeholder="Search by customer or service"
-                       value="<%= request.getParameter("search") != null ? request.getParameter("search") : "" %>">
-                <% if(filterParam != null) { %>
-                <input type="hidden" name="filter" value="<%= filterParam %>">
-                <% } %>
-                <button type="submit" class="btn btn-primary">Search</button>
-            </form>
-
-            <% if (request.getParameter("search") != null && !request.getParameter("search").isEmpty()) { %>
-            <a href="orders.jsp<%= filterParam != null ? "?filter=" + filterParam : "" %>" class="btn btn-secondary">
-                Clear Search
-            </a>
-            <% } %>
-        </div>
-
-        <!-- TABLE -->
         <div class="table-responsive">
-            <table class="table table-hover align-middle" style="cursor: pointer;">
+            <table class="table table-hover align-middle" style="cursor:pointer;">
                 <thead class="table-light">
                 <tr>
                     <th>#ID</th>
@@ -104,23 +110,33 @@
                 </thead>
                 <tbody>
                 <%
+                    // 1. Copy bookings
+                    java.util.List<Booking> bookingList = new java.util.ArrayList<>(DataStore.getInstance().getBookings());
+
+                    // 2. Filter pending if selected
+                    if ("pending".equals(filter)) {
+                        bookingList.removeIf(b -> !"Pending".equals(b.getStatus()));
+                    }
+
+                    // 3. Apply search
                     String search = request.getParameter("search");
-                    boolean foundAny = false;
-                    for (Booking b : DataStore.getInstance().getBookings()) {
+                    if (search != null && !search.trim().isEmpty()) {
+                        String lowerSearch = search.toLowerCase();
+                        bookingList.removeIf(b ->
+                                !(b.getCustomerName().toLowerCase().contains(lowerSearch)
+                                        || b.getServiceName().toLowerCase().contains(lowerSearch))
+                        );
+                    }
 
-                        // FILTER LOGIC
-                        if ("pending".equals(filterParam) && !"Pending".equals(b.getStatus())) continue;
+                    // 4. Apply sort
+                    String sort = request.getParameter("sort");
+                    if ("customer".equals(sort)) bookingList.sort((a,b) -> a.getCustomerName().compareToIgnoreCase(b.getCustomerName()));
+                    else if ("service".equals(sort)) bookingList.sort((a,b) -> a.getServiceName().compareToIgnoreCase(b.getServiceName()));
+                    else if ("date".equals(sort)) bookingList.sort((a,b) -> a.getDate().compareToIgnoreCase(b.getDate()));
+                    else if ("status".equals(sort)) bookingList.sort((a,b) -> a.getStatus().compareToIgnoreCase(b.getStatus()));
 
-                        // SEARCH LOGIC
-                        if (search != null && !search.trim().isEmpty()) {
-                            String lowerSearch = search.toLowerCase();
-                            if (!b.getCustomerName().toLowerCase().contains(lowerSearch) &&
-                                    !b.getServiceName().toLowerCase().contains(lowerSearch)) {
-                                continue;
-                            }
-                        }
-
-                        foundAny = true;
+                    boolean foundAny = !bookingList.isEmpty();
+                    for (Booking b : bookingList) {
                 %>
                 <tr class="<%= "Pending".equals(b.getStatus()) ? "table-warning" : "" %>">
                     <td class="text-muted small">#<%= b.getId() %></td>
@@ -144,14 +160,12 @@
                             <input type="hidden" name="id" value="<%= b.getId() %>">
                             <button type="submit" name="action" value="complete"
                                     class="btn btn-outline-success btn-sm px-3 shadow-sm"
-                                    title="Mark as Done"
                                     onclick="return confirmAction('complete');">
                                 <i class="fa-solid fa-square-check fa-lg"></i> Done
                             </button>
 
                             <button type="submit" name="action" value="cancel"
                                     class="btn btn-light text-danger btn-sm px-2 border ms-1"
-                                    title="Cancel Order"
                                     onclick="return confirmAction('cancel');">
                                 <i class="fa-solid fa-xmark"></i>
                             </button>
@@ -167,7 +181,7 @@
                 <tr>
                     <td colspan="6" class="text-center py-5">
                         <div class="text-muted">
-                            <% if ("pending".equals(filterParam)) { %>
+                            <% if ("pending".equals(filter)) { %>
                             <div class="mb-3 p-3 bg-light rounded-circle d-inline-block">
                                 <i class="fa-solid fa-mug-hot fa-2x text-secondary"></i>
                             </div>
@@ -183,7 +197,6 @@
                 </tbody>
             </table>
         </div>
-
     </div>
 </div>
 
