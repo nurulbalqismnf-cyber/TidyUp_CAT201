@@ -61,6 +61,9 @@
                 </span>
             <% } %>
         </div>
+        <p class="text-muted small mb-2">
+            Click “Done” to complete an order or cancel if needed.
+        </p>
 
         <div class="table-responsive">
             <table class="table table-hover align-middle">
@@ -71,7 +74,7 @@
                     <th>Service</th>
                     <th>Price</th>
                     <th>Status</th>
-                    <th>Mark Done</th> </tr>
+                    <th>Actions</th> </tr>
                 </thead>
                 <tbody>
                 <%
