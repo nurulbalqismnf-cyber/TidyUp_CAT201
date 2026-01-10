@@ -96,12 +96,19 @@
 
                     <td>
                         <% if("Completed".equals(b.getStatus())) { %>
-                        <span class="badge bg-success-subtle text-success border border-success">Completed</span>
+                        <span class="badge bg-success-subtle text-success border border-success">
+    <i class="fa-solid fa-circle-check me-1"></i> Completed
+</span>
                         <% } else if("Cancelled".equals(b.getStatus())) { %>
-                        <span class="badge bg-danger-subtle text-danger border border-danger">Cancelled</span>
+                        <span class="badge bg-danger-subtle text-danger border border-danger">
+    <i class="fa-solid fa-circle-xmark me-1"></i> Cancelled
+</span>
                         <% } else { %>
-                        <span class="badge bg-warning text-dark border border-warning">Pending</span>
+                        <span class="badge bg-warning text-dark border border-warning">
+    <i class="fa-solid fa-clock me-1"></i> Pending
+</span>
                         <% } %>
+
                     </td>
 
                     <td>
