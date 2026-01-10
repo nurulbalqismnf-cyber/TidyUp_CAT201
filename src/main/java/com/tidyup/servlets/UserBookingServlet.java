@@ -22,6 +22,14 @@ public class UserBookingServlet extends HttpServlet {
         HttpSession session = request.getSession();
         String currentUser = (String) session.getAttribute("user"); // Gets logged-in username
 
+        if ("logout".equals(action)) {
+            if (session != null) {
+                session.invalidate(); // Destroy session
+            }
+            response.sendRedirect("login.jsp"); // Redirect to login
+            return; // Stop here
+        }
+
         // Safety: If not logged in, send them to login page
         if (currentUser == null) {
             response.sendRedirect("login.jsp");

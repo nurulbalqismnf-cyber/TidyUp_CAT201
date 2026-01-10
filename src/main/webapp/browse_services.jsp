@@ -38,14 +38,31 @@
 </head>
 <body>
 
-<div class="page-header text-center">
-    <div class="container d-flex justify-content-between align-items-center">
-        <h2 class="purple-heading m-0">Available Services</h2>
-        <div>
-            <a href="UserBookingServlet?action=history" class="btn-outline-purple me-2">View My History</a>
-            <a href="logout" class="text-danger text-decoration-none fw-bold small">Logout</a>
-        </div>
+<div class="d-flex justify-content-between align-items-center mb-5 bg-white p-4 rounded-4 shadow-sm">
+
+    <div>
+        <h2 class="fw-bold" style="color: #764ba2;">Available Services</h2>
     </div>
+
+    <div class="d-flex gap-2">
+
+        <a href="UserBookingServlet?action=history"
+           class="btn fw-bold"
+           style="border: 2px solid #764ba2; color: #764ba2; background: white; border-radius: 20px; padding: 8px 20px; transition: 0.3s;"
+           onmouseover="this.style.background='#764ba2'; this.style.color='white';"
+           onmouseout="this.style.background='white'; this.style.color='#764ba2';">
+            View My History
+        </a>
+
+        <a href="UserBookingServlet?action=logout"
+           class="btn fw-bold"
+           style="border: 2px solid #764ba2; color: #764ba2; background: white; border-radius: 20px; padding: 8px 20px; transition: 0.3s;"
+           onmouseover="this.style.background='#764ba2'; this.style.color='white';"
+           onmouseout="this.style.background='white'; this.style.color='#764ba2';">
+            Logout
+        </a>
+    </div>
+
 </div>
 
 <div class="container">
