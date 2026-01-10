@@ -60,6 +60,17 @@ public class DataStore {
         }
     }
 
+    // 2. Update an existing Service
+    public void updateService(String id, String newName, double newPrice, String newDesc) {
+        for (Service s : services) {
+            if (s.getId().equals(id)) {
+                s.setName(newName);
+                s.setPrice(newPrice);
+                s.setDescription(newDesc);
+                break;
+            }
+        }
+    }
 
     public static synchronized DataStore getInstance() {
         if (instance == null) {

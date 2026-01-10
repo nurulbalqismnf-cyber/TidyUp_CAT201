@@ -72,11 +72,17 @@
                         <td class="small text-muted"><%= s.getDescription() %></td>
                         <td class="fw-bold text-success">RM <%= s.getPrice() %></td>
                         <td>
-                            <form action="ServiceServlet" method="post" class="m-0">
-                                <input type="hidden" name="action" value="delete">
-                                <input type="hidden" name="id" value="<%= s.getId() %>">
-                                <button class="btn btn-sm btn-outline-danger rounded-pill px-3">Delete</button>
-                            </form>
+                            <div class="d-flex gap-2">
+                                <a href="edit.jsp?id=<%= s.getId() %>" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                    Edit
+                                </a>
+
+                                <form action="ServiceServlet" method="post" class="m-0">
+                                    <input type="hidden" name="action" value="delete">
+                                    <input type="hidden" name="id" value="<%= s.getId() %>">
+                                    <button class="btn btn-sm btn-outline-danger rounded-pill px-3">Delete</button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     <% } %>

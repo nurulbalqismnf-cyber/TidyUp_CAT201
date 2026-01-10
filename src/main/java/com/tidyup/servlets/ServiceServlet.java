@@ -14,22 +14,29 @@ public class ServiceServlet extends HttpServlet {
         String action = req.getParameter("action");
 
         if ("add".equals(action)) {
-            // Add Logic
+            // ... (Your existing add code) ...
             String name = req.getParameter("name");
             String desc = req.getParameter("desc");
             double price = Double.parseDouble(req.getParameter("price"));
-            String id = String.valueOf(System.currentTimeMillis()); // Unique ID
-
+            String id = String.valueOf(System.currentTimeMillis());
             Service newService = new Service(id, name, price, desc);
             DataStore.getInstance().addService(newService);
 
         } else if ("delete".equals(action)) {
-            // Delete Logic
+            // ... (Your existing delete code) ...
             String id = req.getParameter("id");
             DataStore.getInstance().deleteService(id);
+
+        } else if ("update".equals(action)) {
+            // --- NEW UPDATE LOGIC ---
+            String id = req.getParameter("id");
+            String name = req.getParameter("name");
+            String desc = req.getParameter("desc");
+            double price = Double.parseDouble(req.getParameter("price"));
+
+            DataStore.getInstance().updateService(id, name, price, desc);
         }
 
-        // Refresh the page
         resp.sendRedirect("services.jsp");
     }
 }

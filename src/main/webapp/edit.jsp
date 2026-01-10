@@ -12,54 +12,53 @@
 <head>
     <title>Edit Service</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="container mt-5">
+<body class="container mt-5" style="background: #f8f9fa;">
 
 <%
-    // 1. Get the ID from the URL
     String id = request.getParameter("id");
-    // 2. Find the service in our data store
+    // We need to make sure this method exists in DataStore (See Step 2)
     Service s = DataStore.getInstance().getServiceById(id);
 
     if (s == null) {
 %>
-<div class="alert alert-danger">Service not found! <a href="admin">Go Back</a></div>
+<div class="alert alert-danger shadow-sm">
+    Service not found! <a href="services.jsp" class="fw-bold">Go Back</a>
+</div>
 <%
 } else {
 %>
-<div class="card p-4 mx-auto" style="max-width: 500px;">
-    <h3>Edit Service</h3>
 
-    <form action="admin" method="post">
+<div class="card p-4 mx-auto shadow border-0 rounded-4" style="max-width: 500px;">
+    <h3 class="fw-bold text-primary mb-4"><i class="fa-solid fa-pen-to-square"></i> Edit Service</h3>
+
+    <form action="ServiceServlet" method="post">
         <input type="hidden" name="action" value="update">
         <input type="hidden" name="id" value="<%= s.getId() %>">
 
         <div class="mb-3">
-            <label>Service Name</label>
-            <input type="text" name="serviceName" class="form-control" value="<%= s.getName() %>" required>
+            <label class="fw-bold small text-muted">Service Name</label>
+            <input type="text" name="name" class="form-control rounded-3" value="<%= s.getName() %>" required>
         </div>
 
         <div class="mb-3">
-            <label>Price</label>
-            <input type="number" step="0.01" name="price" class="form-control" value="<%= s.getPrice() %>" required>
+            <label class="fw-bold small text-muted">Price (RM)</label>
+            <input type="number" step="0.01" name="price" class="form-control rounded-3" value="<%= s.getPrice() %>" required>
         </div>
 
         <div class="mb-3">
-            <label>Description</label>
-            <textarea name="description" class="form-control" rows="3"><%= s.getDescription() %></textarea>
+            <label class="fw-bold small text-muted">Description</label>
+            <textarea name="desc" class="form-control rounded-3" rows="3"><%= s.getDescription() %></textarea>
         </div>
 
-        <div class="d-flex justify-content-between">
-            <a href="admin" class="btn btn-secondary">Cancel</a>
-            <button type="submit" class="btn btn-success">Save Changes</button>
-        </div>
-
-        <div class="d-flex justify-content-between">
-            <a href="admin" class="btn btn-secondary">
-                <i class="fa-solid fa-arrow-left me-1"></i> Cancel
+        <div class="d-flex justify-content-between mt-4">
+            <a href="services.jsp" class="btn btn-secondary rounded-pill px-4">
+                Cancel
             </a>
-
-            <button type="submit" class="btn btn-success">Save Changes</button>
+            <button type="submit" class="btn btn-success rounded-pill px-4 fw-bold">
+                Save Changes
+            </button>
         </div>
     </form>
 </div>

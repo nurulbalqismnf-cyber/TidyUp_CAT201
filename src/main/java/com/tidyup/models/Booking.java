@@ -11,6 +11,8 @@ public class Booking {
     private String date;
     private String time;
     private String address;
+    private String phoneNumber;
+    private String paymentMethod;
 
     // --- NEW FIELD ADDED HERE ---
     private boolean reviewed = false;
@@ -29,16 +31,18 @@ public class Booking {
     }
 
     // CONSTRUCTOR 2: For Customers (Date/Time based)
-    public Booking(String customerName, String serviceName, String date, String time, String address, String status) {
-        this.id = UUID.randomUUID().toString();
+    public Booking(String customerName, String phoneNumber, String serviceName, String date, String time, String address, String paymentMethod, String status) {
+        this.id = java.util.UUID.randomUUID().toString();
         this.customerName = customerName;
+        this.phoneNumber = phoneNumber;   // New
         this.serviceName = serviceName;
         this.date = date;
         this.time = time;
         this.address = address;
+        this.paymentMethod = paymentMethod; // New
         this.status = status;
         this.price = 0.0;
-        this.reviewed = false; // Default is false
+        this.reviewed = false;
     }
 
     // --- GETTERS & SETTERS ---
@@ -50,6 +54,8 @@ public class Booking {
     public String getDate() { return date; }
     public String getTime() { return time; }
     public String getAddress() { return address; }
+    public String getPhoneNumber() { return phoneNumber; }
+    public String getPaymentMethod() { return paymentMethod; }
 
     public void setStatus(String status) { this.status = status; }
 
