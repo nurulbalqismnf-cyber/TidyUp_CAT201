@@ -50,6 +50,16 @@ public class DataStore {
 
     }
 
+    // Add this anywhere inside the DataStore class
+    public void markBookingAsReviewed(String bookingId) {
+        for (Booking b : bookings) {
+            if (b.getId().equals(bookingId)) {
+                b.setReviewed(true);
+                break;
+            }
+        }
+    }
+
 
     public static synchronized DataStore getInstance() {
         if (instance == null) {

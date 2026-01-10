@@ -14,28 +14,24 @@ public class ReviewServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
         String user = (String) session.getAttribute("user");
+        if(user == null) user = "Guest";
 
-        // 1. Get Form Data
-        // Note: We parse the rating as an Integer
+        // 1. Get Data
+        String bookingId = req.getParameter("bookingId");
         int rating = Integer.parseInt(req.getParameter("rating"));
         String message = req.getParameter("message");
+        String date = java.time.LocalDate.now().toString();
 
-        // 2. Get the current date
-        String date = new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date());
-
-        // 3. Create & Save Review
-        // IMPORTANT: Ensure your existing Review.java constructor matches this order!
-        // It usually is: (Name, Rating, Message, Date) OR (Name, Rating, Message)
-
-        // TRY THIS FIRST (Most common):
+        // 2. Save the Review
         Review newReview = new Review(user, rating, message, date);
-
-        // IF THAT IS RED, TRY THIS (If your date is auto-generated inside Review.java):
-        // Review newReview = new Review(user, rating, message);
-
         DataStore.getInstance().addReview(newReview);
 
-        // 4. Redirect back to history with a success message
-        resp.sendRedirect("UserBookingServlet?action=history&msg=review_success");
+        // 3. IMPORTANT: Mark this specific booking as 'Reviewed'
+        if(bookingId != null && !bookingId.isEmpty()) {
+            DataStore.getInstance().markBookingAsReviewed(bookingId);
+        }
+
+        // 4. Go back to history
+        resp.sendRedirect("UserBookingServlet?action=history");
     }
 }

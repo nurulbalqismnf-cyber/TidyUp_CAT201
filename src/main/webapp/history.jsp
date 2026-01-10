@@ -13,6 +13,8 @@
     <meta charset="UTF-8">
     <title>My History</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
     <style>
         :root {
             --primary-purple: #9b59b6;
@@ -50,17 +52,14 @@
             border: none;
             border-radius: 25px;
             box-shadow: var(--soft-shadow);
-            overflow: hidden; /* Clips the table corners */
+            overflow: hidden;
             padding: 0;
         }
 
-        /* Custom Table Styling */
-        .table {
-            margin-bottom: 0; /* Remove bottom space */
-        }
+        .table { margin-bottom: 0; }
 
         .table thead th {
-            background-color: #f3e5f5; /* Very light purple header */
+            background-color: #f3e5f5;
             color: var(--primary-purple);
             font-weight: 700;
             border: none;
@@ -78,13 +77,7 @@
             font-weight: 500;
         }
 
-        .table tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        .table tbody tr:hover {
-            background-color: #faf5fc; /* Slight purple tint on hover */
-        }
+        .table tbody tr:hover { background-color: #faf5fc; }
 
         /* Status Badges */
         .status-badge {
@@ -93,17 +86,11 @@
             font-size: 0.85rem;
             font-weight: 700;
             text-transform: capitalize;
+            display: inline-block;
         }
 
-        .status-pending {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-
-        .status-success, .status-approved {
-            background-color: #d4edda;
-            color: #155724;
-        }
+        .status-pending { background-color: #fff3cd; color: #856404; }
+        .status-success { background-color: #d4edda; color: #155724; }
 
         /* Buttons */
         .btn-outline-purple {
@@ -118,6 +105,24 @@
         }
 
         .btn-outline-purple:hover {
+            background-color: var(--primary-purple);
+            color: white;
+        }
+
+        /* New Rate Button Style */
+        .btn-rate {
+            border: 1px solid var(--primary-purple);
+            color: var(--primary-purple);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            padding: 5px 15px;
+            font-weight: bold;
+            text-decoration: none;
+            margin-top: 5px;
+            display: inline-block;
+            transition: 0.2s;
+        }
+        .btn-rate:hover {
             background-color: var(--primary-purple);
             color: white;
         }
@@ -157,17 +162,28 @@
                     <td><%= b.getDate() %></td>
                     <td><%= b.getTime() %></td>
                     <td><%= b.getAddress() %></td>
+
                     <td>
-                        <%
-                            String statusClass = "status-pending"; // Default
-                            if ("Approved".equalsIgnoreCase(b.getStatus()) || "Success".equalsIgnoreCase(b.getStatus())) {
-                                statusClass = "status-success";
-                            }
-                        %>
-                        <span class="status-badge <%= statusClass %>">
-                                        <%= b.getStatus() %>
-                                    </span>
+                        <% if ("Success".equalsIgnoreCase(b.getStatus())) { %>
+                        <span class="status-badge status-success">Completed</span>
+                        <br>
+
+                        <% if (b.isReviewed()) { %>
+                        <div style="margin-top: 8px; color: #155724; font-weight: bold; font-size: 0.85rem; opacity: 0.8;">
+                            <i class="fa-solid fa-circle-check"></i> Rated
+                        </div>
+                        <% } else { %>
+                        <a href="review_form.jsp?bookingId=<%= b.getId() %>&service=<%= b.getServiceName() %>"
+                           class="btn-rate">
+                            <i class="fa-solid fa-star"></i> Rate Us
+                        </a>
+                        <% } %>
+
+                        <% } else { %>
+                        <span class="status-badge status-pending"><%= b.getStatus() %></span>
+                        <% } %>
                     </td>
+
                 </tr>
                 <% } %>
                 </tbody>

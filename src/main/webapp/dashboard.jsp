@@ -51,7 +51,7 @@
 
     <div class="row g-4 justify-content-center mb-5">
         <div class="col-md-3">
-            <a href="admin" class="text-decoration-none text-dark">
+            <a href="services.jsp" class="text-decoration-none text-dark">
                 <div class="card module-card p-4 text-center">
                     <i class="fa-solid fa-broom fa-3x text-success mb-3"></i>
                     <h5 class="fw-bold">Services</h5>
@@ -87,42 +87,81 @@
         <div class="col-md-5">
             <div class="revenue-card shadow" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); color: #a30000 !important;">
                 <p class="small text-uppercase mb-1 fw-bold opacity-75">Pending Jobs</p>
-                <h2 class="fw-bold"><%= pendingCount %></h2>
+                <h2 class="fw-bold" id="pendingCountDisplay"><%= pendingCount %></h2>
             </div>
         </div>
     </div>
 
-    <%--    checkbox for task comlete--%>
-    <div class="bg-white p-4 rounded-4 shadow-sm border text-start">
-        <h5 class="fw-bold mb-4 text-primary"><i class="fa-solid fa-list-check me-2"></i> Pending Task Checklist</h5>
-        <table class="table align-middle">
+    <div class="bg-white p-4 rounded-4 shadow-sm border text-start mb-4">
+        <h5 class="fw-bold mb-3 text-primary"><i class="fa-solid fa-clock me-2"></i> Pending Tasks</h5>
+
+        <table class="table align-middle" id="pendingTable">
             <thead class="table-light">
             <tr>
-                <th>Done?</th>
+                <th style="width: 50px;">Done?</th>
                 <th>Customer</th>
                 <th>Service</th>
                 <th class="text-end">Price</th>
             </tr>
             </thead>
             <tbody>
-            <% for(Booking b : DataStore.getInstance().getBookings()) {
-                if(!"Success".equals(b.getStatus())) { %>
-            <tr>
+            <%
+                boolean hasPending = false;
+                for(Booking b : DataStore.getInstance().getBookings()) {
+                    if(!"Success".equals(b.getStatus())) {
+                        hasPending = true;
+            %>
+            <tr id="row_<%= b.getId() %>">
                 <td>
-                    <form action="UpdateTaskServlet" method="POST" class="m-0">
-                        <input type="hidden" name="bookingId" value="<%= b.getId() %>">
-                        <input type="checkbox" class="form-check-input" onchange="this.form.submit()" style="width: 22px; height: 22px; cursor: pointer;">
-                    </form>
+                    <input type="checkbox"
+                           class="form-check-input"
+                           style="width: 22px; height: 22px; cursor: pointer;"
+                           onclick="markTaskDone(this, '<%= b.getId() %>')">
                 </td>
                 <td><span class="fw-bold"><%= b.getCustomerName() %></span></td>
-                <td><span class="badge bg-info-subtle text-info rounded-pill px-3"><%= b.getServiceName() %></span></td>
+                <td><span class="badge bg-warning text-dark rounded-pill px-3"><%= b.getServiceName() %></span></td>
                 <td class="text-end fw-bold">RM <%= String.format("%.2f", b.getPrice()) %></td>
             </tr>
             <% } } %>
+
+            <% if(!hasPending) { %>
+            <tr><td colspan="4" class="text-center text-muted py-3">No pending tasks.</td></tr>
+            <% } %>
             </tbody>
         </table>
     </div>
-</div>
+
+    <script>
+        function markTaskDone(checkbox, bookingId) {
+            // STEP 1: Visually hide the row in the table
+            var row = document.getElementById('row_' + bookingId);
+            if(row) {
+                row.style.transition = "all 0.5s";
+                row.style.opacity = "0";
+                setTimeout(function(){ row.style.display = "none"; }, 500);
+            }
+
+            // STEP 2: Update the "Pending Jobs" Counter at the top
+            var counter = document.getElementById("pendingCountDisplay");
+            if(counter) {
+                var currentVal = parseInt(counter.innerText);
+                if(currentVal > 0) {
+                    counter.innerText = currentVal - 1;
+                }
+            }
+
+            // STEP 3: Send data to server (AJAX)
+            fetch('UpdateTaskServlet', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'bookingId=' + bookingId
+            }).then(response => {
+                console.log("Server updated successfully");
+            }).catch(error => {
+                console.error("Error:", error);
+            });
+        }
+    </script>
 
 <%--statistic--%>
 <div class="container mb-5">
