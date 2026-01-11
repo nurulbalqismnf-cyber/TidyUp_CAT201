@@ -60,6 +60,7 @@ public class Booking {
     public void setStatus(String status) { this.status = status; }
 
     // --- NEW METHODS ADDED HERE ---
+    public void setPrice(double price) {this.price = price;}
     public boolean isReviewed() { return reviewed; }
     public void setReviewed(boolean reviewed) { this.reviewed = reviewed; }
 }

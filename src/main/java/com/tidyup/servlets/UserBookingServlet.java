@@ -52,15 +52,14 @@ public class UserBookingServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        String currentUser = (String) session.getAttribute("user"); // Example: "Farah123"
+        String currentUser = (String) session.getAttribute("user");
 
         if (currentUser == null) {
             response.sendRedirect("login.jsp");
             return;
         }
 
-        // Get form data
-        String formName = request.getParameter("userName"); // What user typed, e.g., "Farah"
+        // 1. Get Form Data
         String phone = request.getParameter("phone");
         String serviceName = request.getParameter("serviceName");
         String date = request.getParameter("date");
@@ -68,12 +67,18 @@ public class UserBookingServlet extends HttpServlet {
         String address = request.getParameter("address");
         String payment = request.getParameter("payment");
 
-        // --- THE FIX IS HERE ---
-        // OLD (Broken): new Booking(formName, ...) -> Saves as "Farah"
-        // NEW (Fixed):  new Booking(currentUser, ...) -> Saves as "Farah123"
-
+        // 2. Create the Basic Booking (Price is 0.0 here)
         Booking newBooking = new Booking(currentUser, phone, serviceName, date, time, address, payment, "Pending");
 
+        // 3. FIX: Find the correct price from DataStore and set it!
+        for (Service s : DataStore.getInstance().getServices()) {
+            if (s.getName().equals(serviceName)) {
+                newBooking.setPrice(s.getPrice()); // Set the real price (e.g., 100.0)
+                break;
+            }
+        }
+
+        // 4. Save to DataStore
         DataStore.getInstance().addBooking(newBooking);
 
         response.sendRedirect("UserBookingServlet?action=history");

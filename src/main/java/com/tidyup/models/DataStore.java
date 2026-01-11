@@ -45,8 +45,17 @@ public class DataStore {
         users.add(new User("Rabiatul123", "123", "customer"));
 
         // --- TEMPORARY TEST BOOKINGS ---
-        bookings.add(new Booking("Farah123", "012-1234567", "Standard Cleaning", "2026-01-12", "10:00", "123 Test St", "Cash", "Pending"));
-        bookings.add(new Booking("Shakira123", "019-9876543", "Deep Cleaning", "2026-01-13", "14:00", "456 Main Rd", "DuitNow", "Pending"));
+        // --- 3. Dummy Bookings ---
+
+        // Booking 1: Standard Cleaning (Price = 100.0)
+        Booking b1 = new Booking("Farah123", "012-1234567", "Standard Cleaning", "2026-01-12", "10:00", "123 Test St", "Cash", "Pending");
+        b1.setPrice(100.0); // <--- MANUALLY SET PRICE HERE
+        bookings.add(b1);
+
+        // Booking 2: Deep Cleaning (Price = 250.0)
+        Booking b2 = new Booking("Shakira123", "019-9876543", "Deep Cleaning", "2026-01-13", "14:00", "456 Main Rd", "DuitNow", "Pending");
+        b2.setPrice(250.0); // <--- MANUALLY SET PRICE HERE
+        bookings.add(b2);
     }
 
     // Add this anywhere inside the DataStore class
