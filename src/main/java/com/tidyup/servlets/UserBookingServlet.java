@@ -20,17 +20,21 @@ public class UserBookingServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         HttpSession session = request.getSession();
-        String currentUser = (String) session.getAttribute("user"); // Gets logged-in username
+        String currentUser = (String) session.getAttribute("user");
 
-        // Safety: If not logged in, send them to login page
+        if ("logout".equals(action)) {
+            if (session != null) session.invalidate();
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
         if (currentUser == null) {
             response.sendRedirect("login.jsp");
             return;
         }
 
         if ("history".equals(action)) {
-            // OPTION A: SHOW BOOKING HISTORY
-            // Filter the list to show ONLY this user's bookings
+            // Filter bookings where customerName == currentUser (e.g., "Farah123")
             List<Booking> myBookings = DataStore.getInstance().getBookings().stream()
                     .filter(b -> b.getCustomerName() != null && b.getCustomerName().equals(currentUser))
                     .collect(Collectors.toList());
@@ -38,7 +42,6 @@ public class UserBookingServlet extends HttpServlet {
             request.setAttribute("myBookings", myBookings);
             request.getRequestDispatcher("history.jsp").forward(request, response);
         } else {
-            // OPTION B: BROWSE SERVICES (Default View)
             List<Service> serviceList = DataStore.getInstance().getServices();
             request.setAttribute("serviceList", serviceList);
             request.getRequestDispatcher("browse_services.jsp").forward(request, response);
@@ -49,22 +52,30 @@ public class UserBookingServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        String currentUser = (String) session.getAttribute("user");
+        String currentUser = (String) session.getAttribute("user"); // Example: "Farah123"
 
-        // 1. Get the detailed data form form
+        if (currentUser == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
+        // Get form data
+        String formName = request.getParameter("userName"); // What user typed, e.g., "Farah"
+        String phone = request.getParameter("phone");
         String serviceName = request.getParameter("serviceName");
         String date = request.getParameter("date");
         String time = request.getParameter("time");
         String address = request.getParameter("address");
+        String payment = request.getParameter("payment");
 
-        // 2. Create the Booking
-        // NOTE: You might need to update your Booking.java model to add this constructor!
-        Booking newBooking = new Booking(currentUser, serviceName, date, time, address, "Pending");
+        // --- THE FIX IS HERE ---
+        // OLD (Broken): new Booking(formName, ...) -> Saves as "Farah"
+        // NEW (Fixed):  new Booking(currentUser, ...) -> Saves as "Farah123"
 
-        // 3. Save it
+        Booking newBooking = new Booking(currentUser, phone, serviceName, date, time, address, payment, "Pending");
+
         DataStore.getInstance().addBooking(newBooking);
 
-        // 4. Redirect user to their history to see it appeared
         response.sendRedirect("UserBookingServlet?action=history");
     }
 }

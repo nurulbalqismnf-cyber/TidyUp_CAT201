@@ -1,25 +1,28 @@
 package com.tidyup.servlets;
 
 import com.tidyup.models.DataStore;
-import com.tidyup.models.Booking;
-import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet("/updateTask")
 public class UpdateTaskServlet extends HttpServlet {
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        // Change "id" to "bookingId" to match your JSP form
-        String bookingId = req.getParameter("bookingId");
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String id = req.getParameter("bookingId");
 
-        for (Booking b : DataStore.getInstance().getBookings()) {
-            if (String.valueOf(b.getId()).equals(bookingId)) {
-                b.setStatus("Completed");
-                break;
-            }
+        // 1. Mark as Success
+        if(id != null) {
+            DataStore.getInstance().updateBookingStatus(id, "Success");
         }
-        resp.sendRedirect("dashboard.jsp");
+
+        // 2. Redirect back to the SAME page you came from
+        String referer = req.getHeader("Referer");
+        if(referer != null) {
+            resp.sendRedirect(referer);
+        } else {
+            resp.sendRedirect("dashboard.jsp"); // Fallback
+        }
     }
 }
