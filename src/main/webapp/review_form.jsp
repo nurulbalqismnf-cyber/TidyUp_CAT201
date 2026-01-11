@@ -34,6 +34,9 @@
     <p class="text-muted small mb-4">How was the cleaning service?</p>
 
     <form action="submitReview" method="post">
+
+        <input type="hidden" name="bookingId" value="<%= request.getParameter("bookingId") %>">
+
         <div class="mb-3 text-start">
             <label class="fw-bold text-muted small ms-2">Rating</label>
             <select name="rating" class="form-select">

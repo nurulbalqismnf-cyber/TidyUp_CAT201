@@ -1,6 +1,8 @@
-<%@page import="com.tidyup.models.DataStore" %>
+<%@ page import="com.tidyup.models.DataStore" %>
 <%@ page import="com.tidyup.models.Booking" %>
 <%@ page import="com.tidyup.models.Service" %>
+<%@ page import="com.tidyup.models.Review" %>
+<%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%
@@ -8,9 +10,11 @@
     double earnedRevenue = 0.0;
     double pendingRevenue = 0.0;
     int pendingCount = 0;
+
+    // Calculate Revenue
     for(Booking b : DataStore.getInstance().getBookings()) {
-        if("Completed".equals(b.getStatus())) {
-            earnedRevenue += b.getPrice();
+        if("Success".equalsIgnoreCase(b.getStatus()) || "Completed".equalsIgnoreCase(b.getStatus())) {
+            earnedRevenue += b.getPrice(); // Only count paid/completed jobs
         } else {
             pendingRevenue += b.getPrice();
             pendingCount++;
@@ -37,7 +41,7 @@
 
 <nav class="nav-custom d-flex justify-content-between align-items-center mb-4 shadow-sm">
     <span class="fw-bold"><i class="fa-solid fa-user-shield me-2"></i> Admin Portal</span>
-    <a href="index.jsp" class="btn btn-sm btn-outline-light rounded-pill px-3">Logout</a>
+    <a href="login.jsp" class="btn btn-sm btn-outline-light rounded-pill px-3">Logout</a>
 </nav>
 
 <%--pannel for servicce, order, customers--%>
@@ -47,7 +51,7 @@
 
     <div class="row g-4 justify-content-center mb-5">
         <div class="col-md-3">
-            <a href="admin" class="text-decoration-none text-dark">
+            <a href="services.jsp" class="text-decoration-none text-dark">
                 <div class="card module-card p-4 text-center">
                     <i class="fa-solid fa-broom fa-3x text-success mb-3"></i>
                     <h5 class="fw-bold">Services</h5>
@@ -72,7 +76,7 @@
         </div>
     </div>
 
-<%--    earn money--%>
+    <%--    earn money--%>
     <div class="row g-4 justify-content-center mb-5">
         <div class="col-md-5">
             <div class="revenue-card shadow" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
@@ -83,42 +87,81 @@
         <div class="col-md-5">
             <div class="revenue-card shadow" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); color: #a30000 !important;">
                 <p class="small text-uppercase mb-1 fw-bold opacity-75">Pending Jobs</p>
-                <h2 class="fw-bold"><%= pendingCount %></h2>
+                <h2 class="fw-bold" id="pendingCountDisplay"><%= pendingCount %></h2>
             </div>
         </div>
     </div>
 
-<%--    checkbox for task comlete--%>
-    <div class="bg-white p-4 rounded-4 shadow-sm border text-start">
-        <h5 class="fw-bold mb-4 text-primary"><i class="fa-solid fa-list-check me-2"></i> Pending Task Checklist</h5>
-        <table class="table align-middle">
+    <div class="bg-white p-4 rounded-4 shadow-sm border text-start mb-4">
+        <h5 class="fw-bold mb-3 text-primary"><i class="fa-solid fa-clock me-2"></i> Pending Tasks</h5>
+
+        <table class="table align-middle" id="pendingTable">
             <thead class="table-light">
             <tr>
-                <th>Done?</th>
+                <th style="width: 50px;">Done?</th>
                 <th>Customer</th>
                 <th>Service</th>
                 <th class="text-end">Price</th>
             </tr>
             </thead>
             <tbody>
-            <% for(Booking b : DataStore.getInstance().getBookings()) {
-                if("Pending".equals(b.getStatus())) { %>
-            <tr>
+            <%
+                boolean hasPending = false;
+                for(Booking b : DataStore.getInstance().getBookings()) {
+                    if(!"Success".equals(b.getStatus())) {
+                        hasPending = true;
+            %>
+            <tr id="row_<%= b.getId() %>">
                 <td>
-                    <form action="updateTask" method="POST" class="m-0">
-                        <input type="hidden" name="bookingId" value="<%= b.getId() %>">
-                        <input type="checkbox" class="form-check-input" onchange="this.form.submit()" style="width: 22px; height: 22px; cursor: pointer;">
-                    </form>
+                    <input type="checkbox"
+                           class="form-check-input"
+                           style="width: 22px; height: 22px; cursor: pointer;"
+                           onclick="markTaskDone(this, '<%= b.getId() %>')">
                 </td>
                 <td><span class="fw-bold"><%= b.getCustomerName() %></span></td>
-                <td><span class="badge bg-info-subtle text-info rounded-pill px-3"><%= b.getServiceName() %></span></td>
+                <td><span class="badge bg-warning text-dark rounded-pill px-3"><%= b.getServiceName() %></span></td>
                 <td class="text-end fw-bold">RM <%= String.format("%.2f", b.getPrice()) %></td>
             </tr>
             <% } } %>
+
+            <% if(!hasPending) { %>
+            <tr><td colspan="4" class="text-center text-muted py-3">No pending tasks.</td></tr>
+            <% } %>
             </tbody>
         </table>
     </div>
-</div>
+
+    <script>
+        function markTaskDone(checkbox, bookingId) {
+            // STEP 1: Visually hide the row in the table
+            var row = document.getElementById('row_' + bookingId);
+            if(row) {
+                row.style.transition = "all 0.5s";
+                row.style.opacity = "0";
+                setTimeout(function(){ row.style.display = "none"; }, 500);
+            }
+
+            // STEP 2: Update the "Pending Jobs" Counter at the top
+            var counter = document.getElementById("pendingCountDisplay");
+            if(counter) {
+                var currentVal = parseInt(counter.innerText);
+                if(currentVal > 0) {
+                    counter.innerText = currentVal - 1;
+                }
+            }
+
+            // STEP 3: Send data to server (AJAX)
+            fetch('UpdateTaskServlet', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'bookingId=' + bookingId
+            }).then(response => {
+                console.log("Server updated successfully");
+            }).catch(error => {
+                console.error("Error:", error);
+            });
+        }
+    </script>
 
 <%--statistic--%>
 <div class="container mb-5">
@@ -139,68 +182,51 @@
     </div>
 </div>
 
-<%--review/ feedback--%>
+<%-- DYNAMIC REVIEWS SECTION --%>
 <div class="container mb-5">
     <div class="p-4 rounded-4 bg-white shadow-sm border">
         <h5 class="fw-bold mb-4 text-dark"><i class="fa-solid fa-star text-warning me-2"></i> Recent Customer Feedback</h5>
 
         <div class="row g-3">
-            <%-- Example of how to loop through reviews --%>
-            <div class="col-md-6">
-                <div class="p-3 rounded-4 border bg-light h-100">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="fw-bold text-primary">Farah Ummairah</span>
-                        <div class="text-warning small">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                        </div>
-                    </div>
-                    <p class="small text-muted mb-1">"The deep cleaning service was amazing! My kitchen looks brand new."</p>
-                    <small class="text-secondary opacity-75" style="font-size: 0.75rem;">Received: 2 hours ago</small>
-                </div>
-            </div>
+            <%
+                // 1. Get Real Reviews from DataStore
+                List<Review> reviews = DataStore.getInstance().getReviews();
 
+                if (reviews != null && !reviews.isEmpty()) {
+                    // 2. Loop through them
+                    for (Review r : reviews) {
+            %>
             <div class="col-md-6">
                 <div class="p-3 rounded-4 border bg-light h-100">
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="fw-bold text-primary">Shakira Insyirah</span>
+                        <span class="fw-bold text-primary"><%= r.getCustomerName() %></span>
+
                         <div class="text-warning small">
+                            <%
+                                int rating = r.getRating();
+                                for(int i=1; i<=5; i++) {
+                                    if(i <= rating) {
+                            %>
                             <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
+                            <%     } else { %>
                             <i class="fa-regular fa-star"></i>
+                            <%     }
+                            }
+                            %>
                         </div>
                     </div>
-                    <p class="small text-muted mb-1">"Good service, but the cleaner arrived 10 minutes late."</p>
-                    <small class="text-secondary opacity-75" style="font-size: 0.75rem;">Received: Yesterday</small>
+                    <p class="small text-muted mb-1">"<%= r.getMessage() %>"</p>
+                    <small class="text-secondary opacity-75" style="font-size: 0.75rem;">Date: <%= r.getDate() %></small>
                 </div>
             </div>
-
-                <div class="col-md-6">
-                    <div class="p-3 rounded-4 border bg-light h-100">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="fw-bold text-primary">Rabiatul Azzahra</span>
-                            <div class="text-warning small">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                            </div>
-                        </div>
-                        <p class="small text-muted mb-1">"5 star for the service. Literally like a new house."</p>
-                        <small class="text-secondary opacity-75" style="font-size: 0.75rem;">Received: 30 minute ago</small>
-                    </div>
-                </div>
-
-        </div>
-
-        <div class="text-center mt-4">
-            <a href="reviews.jsp" class="btn btn-sm btn-outline-primary rounded-pill px-4">View All Reviews</a>
+            <%
+                }
+            } else {
+            %>
+            <div class="col-12 text-center text-muted py-4">
+                No reviews have been submitted yet.
+            </div>
+            <% } %>
         </div>
     </div>
 </div>
@@ -214,7 +240,7 @@
             labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
             datasets: [{
                 label: 'Monthly Earnings (RM)',
-                data: [1200, 1900, 1500, 2500, 2200, 3000], // You can later link this to real DB data
+                data: [1200, 1900, 1500, 2500, 2200, 3000],
                 borderColor: '#00d2ff',
                 backgroundColor: 'rgba(0, 210, 255, 0.1)',
                 fill: true,

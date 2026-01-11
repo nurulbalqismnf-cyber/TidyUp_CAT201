@@ -43,6 +43,32 @@ public class DataStore {
         users.add(new User("Farah123", "123", "customer"));
         users.add(new User("Shakira123", "123", "customer"));
         users.add(new User("Rabiatul123", "123", "customer"));
+
+        // --- TEMPORARY TEST BOOKINGS ---
+        bookings.add(new Booking("Farah123", "012-1234567", "Standard Cleaning", "2026-01-12", "10:00", "123 Test St", "Cash", "Pending"));
+        bookings.add(new Booking("Shakira123", "019-9876543", "Deep Cleaning", "2026-01-13", "14:00", "456 Main Rd", "DuitNow", "Pending"));
+    }
+
+    // Add this anywhere inside the DataStore class
+    public void markBookingAsReviewed(String bookingId) {
+        for (Booking b : bookings) {
+            if (b.getId().equals(bookingId)) {
+                b.setReviewed(true);
+                break;
+            }
+        }
+    }
+
+    // 2. Update an existing Service
+    public void updateService(String id, String newName, double newPrice, String newDesc) {
+        for (Service s : services) {
+            if (s.getId().equals(id)) {
+                s.setName(newName);
+                s.setPrice(newPrice);
+                s.setDescription(newDesc);
+                break;
+            }
+        }
     }
 
     public static synchronized DataStore getInstance() {
