@@ -17,6 +17,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
     <script>
         function confirmAction(action) {
             if(action === 'complete') return confirm("Mark this order as COMPLETED?");
@@ -79,8 +81,11 @@
     </script>
 </head>
 <body>
+<jsp:include page="sidebar.jsp" />
 <nav class="navbar navbar-dark mb-4">
-    <div class="container">
+    <div class="main-content">
+        <div class="container">
+
         <span class="navbar-brand fw-bold">
             <i class="fa-solid fa-file-invoice me-2"></i> Order Management
         </span>
