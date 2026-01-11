@@ -11,6 +11,10 @@
         body { margin: 0; padding: 0; overflow: hidden; font-family: 'Poppins', sans-serif; }
         .page-content { background: linear-gradient(to bottom, #a0e9ff, #ffffff); height: 100vh; overflow-y: auto; width: 100%; }
         .table-card { border: none; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); background: white; padding: 2rem; }
+
+        /* Clickable Name Styling */
+        .customer-link { cursor: pointer; color: #333; transition: 0.2s; }
+        .customer-link:hover { color: #007bff; }
     </style>
     <script>
         function confirmAction(action) {
@@ -71,7 +75,7 @@
                         <%
                             boolean foundAny = false;
                             for (Booking b : DataStore.getInstance().getBookings()) {
-                                // 1. Apply Filter: If filtering, skip rows that don't match
+                                // Filter logic
                                 if(filterUser != null && !filterUser.isEmpty() && !b.getCustomerName().equals(filterUser)) {
                                     continue;
                                 }
@@ -79,7 +83,11 @@
                                 String rowClass = "Pending".equals(b.getStatus()) ? "table-warning" : "";
                         %>
                         <tr class="<%= rowClass %>">
-                            <td class="fw-bold"><%= b.getCustomerName() %></td>
+                            <td class="fw-bold">
+                                <a class="text-decoration-none customer-link" data-bs-toggle="modal" data-bs-target="#orderModal_<%= b.getId() %>">
+                                    <%= b.getCustomerName() %> <i class="fa-solid fa-eye small text-primary ms-1 opacity-50"></i>
+                                </a>
+                            </td>
                             <td><span class="badge bg-light text-dark border"><%= b.getServiceName() %></span></td>
                             <td><%= b.getDate() %></td>
                             <td>
@@ -103,6 +111,80 @@
                                 <% } %>
                             </td>
                         </tr>
+
+                        <div class="modal fade" id="orderModal_<%= b.getId() %>" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content border-0 shadow rounded-4">
+                                    <div class="modal-header bg-primary text-white">
+                                        <h5 class="modal-title fw-bold"><i class="fa-solid fa-clipboard-list me-2"></i>Order Details</h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body p-4">
+
+                                        <div class="mb-4">
+                                            <h6 class="text-muted text-uppercase small fw-bold mb-3">Customer Information</h6>
+                                            <div class="d-flex align-items-center mb-2">
+                                                <div class="bg-light rounded-circle p-2 me-3"><i class="fa-solid fa-user text-primary"></i></div>
+                                                <div><small class="text-muted d-block">Name</small><strong><%= b.getCustomerName() %></strong></div>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-2">
+                                                <div class="bg-light rounded-circle p-2 me-3"><i class="fa-solid fa-phone text-success"></i></div>
+                                                <div><small class="text-muted d-block">Phone Number</small><strong><%= b.getPhoneNumber() %></strong></div>
+                                            </div>
+                                            <div class="d-flex align-items-start">
+                                                <div class="bg-light rounded-circle p-2 me-3"><i class="fa-solid fa-location-dot text-danger"></i></div>
+                                                <div><small class="text-muted d-block">Address</small><strong><%= b.getAddress() %></strong></div>
+                                            </div>
+                                        </div>
+
+                                        <hr class="opacity-25">
+
+                                        <div>
+                                            <h6 class="text-muted text-uppercase small fw-bold mb-3">Service Details</h6>
+                                            <div class="row g-3">
+                                                <div class="col-6">
+                                                    <div class="p-2 border rounded bg-light">
+                                                        <small class="text-muted d-block">Service Type</small>
+                                                        <span class="fw-bold text-dark"><%= b.getServiceName() %></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="p-2 border rounded bg-light">
+                                                        <small class="text-muted d-block">Date</small>
+                                                        <span class="fw-bold text-dark"><%= b.getDate() %></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="p-2 border rounded bg-light">
+                                                        <small class="text-muted d-block">Time</small>
+                                                        <span class="fw-bold text-dark"><%= b.getTime() %></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="p-2 border rounded bg-light">
+                                                        <small class="text-muted d-block">Price</small>
+                                                        <span class="fw-bold text-success">RM <%= String.format("%.2f", b.getPrice()) %></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <div class="p-2 border rounded bg-light d-flex align-items-center">
+                                                        <i class="fa-solid fa-credit-card text-secondary me-3 fs-5 ps-2"></i>
+                                                        <div>
+                                                            <small class="text-muted d-block">Payment Method</small>
+                                                            <span class="fw-bold text-dark"><%= b.getPaymentMethod() %></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="modal-footer border-0">
+                                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <% } %>
 
                         <% if(!foundAny) { %>
@@ -116,5 +198,6 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

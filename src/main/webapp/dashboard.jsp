@@ -62,7 +62,7 @@
             <a href="login.jsp" class="btn btn-sm btn-outline-light rounded-pill px-3">Logout</a>
         </nav>
 
-        <%-- YOUR EXISTING DASHBOARD CONTENT STARTS HERE --%>
+        <%-- DASHBOARD CONTENT --%>
 
         <div class="container text-center mb-5">
             <h1 class="fw-bold">Welcome back, Admin!</h1>
@@ -132,14 +132,10 @@
                     %>
                     <tr id="row_<%= b.getId() %>">
                         <td>
-                            <form action="orders" method="post" style="display:inline;">
-                                <input type="hidden" name="id" value="<%= b.getId() %>">
-                                <button type="submit" name="action" value="complete"
-                                        class="btn btn-sm btn-outline-success border-0"
-                                        title="Mark Done">
-                                    <i class="fa-regular fa-square-check fa-xl"></i>
-                                </button>
-                            </form>
+                            <input type="checkbox"
+                                   class="form-check-input fs-5 border-2 border-primary"
+                                   style="cursor: pointer;"
+                                   onclick="dissolveRow(this)">
                         </td>
                         <td><span class="fw-bold"><%= b.getCustomerName() %></span></td>
                         <td><span class="badge bg-warning text-dark rounded-pill px-3"><%= b.getServiceName() %></span></td>
@@ -210,8 +206,33 @@
                 </div>
             </div>
 
-        </div> </div> </div> <script>
-    // 1. Revenue Growth Chart
+        </div> </div> </div>
+
+<script>
+    // --- 1. THE DISSOLVE FUNCTION ---
+    function dissolveRow(checkbox) {
+        // Find the row
+        var row = checkbox.closest("tr");
+
+        // Visual Effect
+        row.style.transition = "all 0.5s ease";
+        row.style.opacity = "0";
+        row.style.transform = "translateX(20px)";
+
+        // Update the "Pending Jobs" counter at the top immediately
+        var counter = document.getElementById("pendingCountDisplay");
+        var currentCount = parseInt(counter.innerText);
+        if (currentCount > 0) {
+            counter.innerText = currentCount - 1;
+        }
+
+        // Wait 0.5s then remove from HTML
+        setTimeout(function() {
+            row.remove();
+        }, 500);
+    }
+
+    // --- 2. Revenue Growth Chart ---
     const ctxLine = document.getElementById('revenueChart').getContext('2d');
     new Chart(ctxLine, {
         type: 'line',
@@ -229,7 +250,7 @@
         options: { responsive: true, plugins: { legend: { display: false } } }
     });
 
-    // 2. Service Popularity Chart
+    // --- 3. Service Popularity Chart ---
     const ctxPie = document.getElementById('servicePieChart').getContext('2d');
     new Chart(ctxPie, {
         type: 'doughnut',
