@@ -6,6 +6,19 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<%-- SIMPLE SESSION CLEAR: Logic to handle logout automatically --%>
+<%
+    // 1. Prevent browser caching (Fixes Back Button)
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    response.setHeader("Pragma", "no-cache");
+    response.setDateHeader("Expires", 0);
+
+    // 2. Clear Session Data safely (Does not crash)
+    if (session != null) {
+        session.invalidate();
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>

@@ -8,25 +8,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* 1. Page Reset */
         body { margin: 0; padding: 0; overflow: hidden; font-family: 'Poppins', sans-serif; }
-
-        /* 2. Content Wrapper (Matches Dashboard) */
-        .page-content {
-            background: linear-gradient(to bottom, #a0e9ff, #ffffff);
-            height: 100vh;
-            overflow-y: auto;
-            width: 100%;
-        }
-
-        /* 3. Card Styling */
-        .table-card {
-            border: none;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            background: white;
-            padding: 2rem;
-        }
+        .page-content { background: linear-gradient(to bottom, #a0e9ff, #ffffff); height: 100vh; overflow-y: auto; width: 100%; }
+        .table-card { border: none; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); background: white; padding: 2rem; }
     </style>
     <script>
         function confirmAction(action) {
@@ -54,7 +38,19 @@
         <div class="container-fluid">
             <div class="table-card">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="fw-bold m-0 text-dark">Incoming Bookings</h5>
+                    <div class="d-flex align-items-center gap-2">
+                        <h5 class="fw-bold m-0 text-dark">Bookings List</h5>
+
+                        <%
+                            // FILTER LOGIC
+                            String filterUser = request.getParameter("customer");
+                            if(filterUser != null && !filterUser.isEmpty()) {
+                        %>
+                        <span class="badge bg-info text-dark">Filter: <%= filterUser %></span>
+                        <a href="orders.jsp" class="btn btn-sm btn-secondary rounded-pill ms-2" style="font-size: 0.75rem;">Clear Filter</a>
+                        <% } %>
+                    </div>
+
                     <span class="badge bg-primary rounded-pill px-3 py-2">
                         <%= DataStore.getInstance().getBookings().size() %> Total
                     </span>
@@ -73,7 +69,13 @@
                         </thead>
                         <tbody>
                         <%
+                            boolean foundAny = false;
                             for (Booking b : DataStore.getInstance().getBookings()) {
+                                // 1. Apply Filter: If filtering, skip rows that don't match
+                                if(filterUser != null && !filterUser.isEmpty() && !b.getCustomerName().equals(filterUser)) {
+                                    continue;
+                                }
+                                foundAny = true;
                                 String rowClass = "Pending".equals(b.getStatus()) ? "table-warning" : "";
                         %>
                         <tr class="<%= rowClass %>">
@@ -93,24 +95,18 @@
                                 <% if ("Pending".equals(b.getStatus())) { %>
                                 <form action="orders" method="post" class="d-flex gap-2">
                                     <input type="hidden" name="id" value="<%= b.getId() %>">
-
-                                    <button type="submit" name="action" value="complete"
-                                            class="btn btn-sm btn-success fw-bold"
-                                            onclick="return confirmAction('complete');">
-                                        <i class="fa-solid fa-check me-1"></i> Done
-                                    </button>
-
-                                    <button type="submit" name="action" value="cancel"
-                                            class="btn btn-sm btn-danger px-3"
-                                            onclick="return confirmAction('cancel');">
-                                        <i class="fa-solid fa-xmark"></i>
-                                    </button>
+                                    <button type="submit" name="action" value="complete" class="btn btn-sm btn-success fw-bold" onclick="return confirmAction('complete');"><i class="fa-solid fa-check me-1"></i> Done</button>
+                                    <button type="submit" name="action" value="cancel" class="btn btn-sm btn-danger px-3" onclick="return confirmAction('cancel');"><i class="fa-solid fa-xmark"></i></button>
                                 </form>
                                 <% } else { %>
                                 <span class="text-muted small"><i class="fa-solid fa-lock"></i> Closed</span>
                                 <% } %>
                             </td>
                         </tr>
+                        <% } %>
+
+                        <% if(!foundAny) { %>
+                        <tr><td colspan="5" class="text-center py-4 text-muted">No bookings found.</td></tr>
                         <% } %>
                         </tbody>
                     </table>

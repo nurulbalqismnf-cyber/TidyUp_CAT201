@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <style>
+    /* 1. Sidebar Styling */
     #sidebar-wrapper {
         min-width: 250px;
         max-width: 250px;
@@ -9,26 +10,29 @@
         box-shadow: 2px 0 5px rgba(0,0,0,0.05);
         display: flex;
         flex-direction: column;
-        overflow: hidden; /* Important for hiding content when collapsed */
+        overflow: hidden;
         border-right: 1px solid #eee;
     }
 
+    /* 2. Collapsed State: Starts with Width 0 */
     #sidebar-wrapper.collapsed {
         min-width: 0;
         max-width: 0;
     }
 
-    /* Hide specific elements when collapsed to prevent glitching */
+    /* Hide content immediately when collapsed so text doesn't squish */
     #sidebar-wrapper.collapsed * {
         display: none;
     }
 
+    /* Link Styling */
     .nav-link { color: #333; font-weight: 500; padding: 12px 20px; transition: 0.2s; display: flex; align-items: center; }
     .nav-link:hover { background-color: #f0f4f8; color: #6a11cb; text-decoration: none; }
     .nav-link i { width: 30px; font-size: 1.1rem; }
 </style>
 
-<div id="sidebar-wrapper">
+<div id="sidebar-wrapper" class="collapsed">
+
     <div class="p-4 mb-2">
         <span class="fs-4 fw-bold" style="color: #6a11cb;">
             <i class="fa-solid fa-broom me-2"></i> TidyUp
@@ -59,10 +63,6 @@
 <script>
     function toggleSidebar() {
         const sidebar = document.getElementById("sidebar-wrapper");
-        if(sidebar) {
-            sidebar.classList.toggle("collapsed");
-        } else {
-            console.error("Sidebar element not found!");
-        }
+        sidebar.classList.toggle("collapsed");
     }
 </script>

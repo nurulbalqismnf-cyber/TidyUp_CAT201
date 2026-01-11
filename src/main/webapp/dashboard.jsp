@@ -10,6 +10,7 @@
     double pendingRevenue = 0.0;
     int pendingCount = 0;
 
+    // Calculate Revenue
     for(Booking b : DataStore.getInstance().getBookings()) {
         if("Success".equalsIgnoreCase(b.getStatus()) || "Completed".equalsIgnoreCase(b.getStatus())) {
             earnedRevenue += b.getPrice();
@@ -28,21 +29,21 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* 1. Reset Body to allow Side-by-Side layout */
-        body { margin: 0; padding: 0; overflow: hidden; font-family: 'Poppins', sans-serif; }
-
-        /* 2. Move Gradient to the Content Area */
-        .dashboard-content {
-            background: linear-gradient(to bottom, #a0e9ff, #ffffff);
-            height: 100vh;
-            overflow-y: auto; /* Allow scrolling */
-            width: 100%;
-        }
+        /* MOVED GRADIENT TO CONTENT WRAPPER SO SIDEBAR STAYS WHITE */
+        body { margin: 0; overflow: hidden; font-family: 'Poppins', sans-serif; }
 
         .nav-custom { background-color: #00d2ff; padding: 10px 20px; color: white; }
         .revenue-card { border-radius: 25px; color: white; padding: 25px; border: none; }
         .module-card { background: white; border-radius: 20px; border: none; box-shadow: 0 10px 20px rgba(0,0,0,0.05); transition: 0.3s; }
         .module-card:hover { transform: translateY(-5px); }
+
+        /* CONTENT WRAPPER FOR SCROLLING */
+        .content-scrollable {
+            height: 100vh;
+            overflow-y: auto;
+            background: linear-gradient(to bottom, #a0e9ff, #ffffff);
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -51,15 +52,17 @@
 
     <jsp:include page="sidebar.jsp" />
 
-    <div class="dashboard-content">
+    <div class="content-scrollable">
 
         <nav class="nav-custom d-flex justify-content-between align-items-center mb-4 shadow-sm">
             <div class="d-flex align-items-center">
-                <i class="fa-solid fa-bars me-3" onclick="toggleSidebar()" style="cursor: pointer; font-size: 1.5rem;"></i>
+                <i class="fa-solid fa-bars me-3" onclick="toggleSidebar()" style="cursor: pointer; font-size: 1.2rem;"></i>
                 <span class="fw-bold"><i class="fa-solid fa-user-shield me-2"></i> Admin Portal</span>
             </div>
-            <a href="logout" class="btn btn-sm btn-outline-light rounded-pill px-3">Logout</a>
+            <a href="login.jsp" class="btn btn-sm btn-outline-light rounded-pill px-3">Logout</a>
         </nav>
+
+        <%-- YOUR EXISTING DASHBOARD CONTENT STARTS HERE --%>
 
         <div class="container text-center mb-5">
             <h1 class="fw-bold">Welcome back, Admin!</h1>
@@ -92,6 +95,7 @@
                 </div>
             </div>
 
+            <%-- Earn Money Section --%>
             <div class="row g-4 justify-content-center mb-5">
                 <div class="col-md-5">
                     <div class="revenue-card shadow" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
@@ -109,31 +113,136 @@
 
             <div class="bg-white p-4 rounded-4 shadow-sm border text-start mb-4">
                 <h5 class="fw-bold mb-3 text-primary"><i class="fa-solid fa-clock me-2"></i> Pending Tasks</h5>
-                <table class="table align-middle">
-                    <thead class="table-light"><tr><th style="width: 50px;">Done?</th><th>Customer</th><th>Service</th><th class="text-end">Price</th></tr></thead>
+
+                <table class="table align-middle" id="pendingTable">
+                    <thead class="table-light">
+                    <tr>
+                        <th style="width: 50px;">Done?</th>
+                        <th>Customer</th>
+                        <th>Service</th>
+                        <th class="text-end">Price</th>
+                    </tr>
+                    </thead>
                     <tbody>
                     <%
                         boolean hasPending = false;
                         for(Booking b : DataStore.getInstance().getBookings()) {
-                            if("Pending".equals(b.getStatus())) {
+                            if(!"Success".equals(b.getStatus()) && !"Completed".equals(b.getStatus()) && !"Cancelled".equals(b.getStatus())) {
                                 hasPending = true;
                     %>
                     <tr id="row_<%= b.getId() %>">
                         <td>
                             <form action="orders" method="post" style="display:inline;">
                                 <input type="hidden" name="id" value="<%= b.getId() %>">
-                                <button type="submit" name="action" value="complete" class="btn btn-sm btn-outline-success border-0"><i class="fa-regular fa-square-check fa-xl"></i></button>
+                                <button type="submit" name="action" value="complete"
+                                        class="btn btn-sm btn-outline-success border-0"
+                                        title="Mark Done">
+                                    <i class="fa-regular fa-square-check fa-xl"></i>
+                                </button>
                             </form>
                         </td>
                         <td><span class="fw-bold"><%= b.getCustomerName() %></span></td>
                         <td><span class="badge bg-warning text-dark rounded-pill px-3"><%= b.getServiceName() %></span></td>
                         <td class="text-end fw-bold">RM <%= String.format("%.2f", b.getPrice()) %></td>
                     </tr>
-                    <% } } if(!hasPending) { %> <tr><td colspan="4" class="text-center text-muted">No pending tasks.</td></tr> <% } %>
+                    <% } } %>
+
+                    <% if(!hasPending) { %>
+                    <tr><td colspan="4" class="text-center text-muted py-3">No pending tasks.</td></tr>
+                    <% } %>
                     </tbody>
                 </table>
             </div>
 
-        </div> </div> </div> <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            <%-- Statistics --%>
+            <div class="container mb-5">
+                <div class="row g-4">
+                    <div class="col-md-8">
+                        <div class="p-4 rounded-4 bg-white shadow-sm border h-100">
+                            <h5 class="fw-bold mb-4"><i class="fa-solid fa-chart-line me-2 text-primary"></i> Revenue Growth</h5>
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="p-4 rounded-4 bg-white shadow-sm border h-100">
+                            <h5 class="fw-bold mb-4"><i class="fa-solid fa-chart-pie me-2 text-info"></i> Service Split</h5>
+                            <canvas id="servicePieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <%-- Reviews Section --%>
+            <div class="container mb-5">
+                <div class="p-4 rounded-4 bg-white shadow-sm border">
+                    <h5 class="fw-bold mb-4 text-dark"><i class="fa-solid fa-star text-warning me-2"></i> Recent Customer Feedback</h5>
+
+                    <div class="row g-3">
+                        <%
+                            List<Review> reviews = DataStore.getInstance().getReviews();
+                            if (reviews != null && !reviews.isEmpty()) {
+                                for (Review r : reviews) {
+                        %>
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-4 border bg-light h-100">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="fw-bold text-primary"><%= r.getCustomerName() %></span>
+                                    <div class="text-warning small">
+                                        <%
+                                            int rating = r.getRating();
+                                            for(int i=1; i<=5; i++) {
+                                        %>
+                                        <i class="fa-solid fa-star <%= i <= rating ? "" : "text-muted opacity-25" %>"></i>
+                                        <% } %>
+                                    </div>
+                                </div>
+                                <p class="small text-muted mb-1">"<%= r.getMessage() %>"</p>
+                                <small class="text-secondary opacity-75" style="font-size: 0.75rem;">Date: <%= r.getDate() %></small>
+                            </div>
+                        </div>
+                        <% } } else { %>
+                        <div class="col-12 text-center text-muted py-4">
+                            No reviews have been submitted yet.
+                        </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+        </div> </div> </div> <script>
+    // 1. Revenue Growth Chart
+    const ctxLine = document.getElementById('revenueChart').getContext('2d');
+    new Chart(ctxLine, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Monthly Earnings (RM)',
+                data: [1200, 1900, 1500, 2500, 2200, 3000],
+                borderColor: '#00d2ff',
+                backgroundColor: 'rgba(0, 210, 255, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+
+    // 2. Service Popularity Chart
+    const ctxPie = document.getElementById('servicePieChart').getContext('2d');
+    new Chart(ctxPie, {
+        type: 'doughnut',
+        data: {
+            labels: ['Basic', 'Deep Clean', 'Office'],
+            datasets: [{
+                data: [50, 30, 20],
+                backgroundColor: ['#43e97b', '#fa709a', '#667eea']
+            }]
+        },
+        options: { cutout: '70%', plugins: { legend: { position: 'bottom' } } }
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
