@@ -22,6 +22,14 @@ public class UserBookingServlet extends HttpServlet {
         HttpSession session = request.getSession();
         String currentUser = (String) session.getAttribute("user"); // Gets logged-in username
 
+        if ("logout".equals(action)) {
+            if (session != null) {
+                session.invalidate(); // Destroy session
+            }
+            response.sendRedirect("login.jsp"); // Redirect to login
+            return; // Stop here
+        }
+
         // Safety: If not logged in, send them to login page
         if (currentUser == null) {
             response.sendRedirect("login.jsp");
@@ -46,25 +54,36 @@ public class UserBookingServlet extends HttpServlet {
     }
 
     // --- doPost: Handles "Submitting" a New Booking ---
+    // --- doPost: Handles "Submitting" a New Booking ---
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 1. Get the current session (Optional, mainly for security check)
         HttpSession session = request.getSession();
         String currentUser = (String) session.getAttribute("user");
 
-        // 1. Get the detailed data form form
+        if (currentUser == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
+        // 2. Get ALL parameters from the "browse_services.jsp" form
+        // Note: We use the "userName" from the form so the name matches what they typed
+        String name = request.getParameter("userName");
+        String phone = request.getParameter("phone");       // NEW
         String serviceName = request.getParameter("serviceName");
         String date = request.getParameter("date");
         String time = request.getParameter("time");
         String address = request.getParameter("address");
+        String payment = request.getParameter("payment");   // NEW
 
-        // 2. Create the Booking
-        // NOTE: You might need to update your Booking.java model to add this constructor!
-        Booking newBooking = new Booking(currentUser, serviceName, date, time, address, "Pending");
+        // 3. Create the Booking with the NEW Constructor
+        // (Make sure this matches the order in Booking.java!)
+        Booking newBooking = new Booking(name, phone, serviceName, date, time, address, payment, "Pending");
 
-        // 3. Save it
+        // 4. Save it to DataStore
         DataStore.getInstance().addBooking(newBooking);
 
-        // 4. Redirect user to their history to see it appeared
+        // 5. Redirect user to their history
         response.sendRedirect("UserBookingServlet?action=history");
     }
 }
