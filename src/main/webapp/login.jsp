@@ -9,12 +9,10 @@
 
 <%-- SIMPLE SESSION CLEAR: Logic to handle logout automatically --%>
 <%
-    // 1. Prevent browser caching (Fixes Back Button)
     response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     response.setHeader("Pragma", "no-cache");
     response.setDateHeader("Expires", 0);
 
-    // 2. Clear Session Data safely (Does not crash)
     if (session != null) {
         session.invalidate();
     }
@@ -27,7 +25,6 @@
     <title>TidyUp Login</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* --- FRIENDLY PURPLE THEME --- */
         :root {
             --primary-purple: #9b59b6;  /* The main soft purple color */
             --purple-hover: #8e44ad;    /* Slightly darker for hover states */
@@ -38,7 +35,6 @@
 
         body {
             background-color: var(--light-purple-bg);
-            /* Center everything nicely */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -49,7 +45,6 @@
         .login-card {
             width: 100%;
             max-width: 420px;
-            /* Very rounded corners are friendlier */
             border-radius: 30px;
             border: none;
             box-shadow: var(--soft-shadow);
@@ -57,16 +52,13 @@
             background: white;
         }
 
-        /* Custom text colors */
         h3.purple-heading { color: var(--primary-purple); font-weight: 800; font-size: 2rem; }
         p.purple-muted { color: var(--dark-text); opacity: 0.8; font-size: 1.1rem; line-height: 1.5; }
         .purple-icon { color: var(--primary-purple); }
 
-        /* Custom Purple Button Style */
         .btn-purple {
             background-color: var(--primary-purple);
             border: none;
-            /* Pill shape for maximum friendliness */
             border-radius: 50px;
             padding: 14px;
             font-weight: 700;
@@ -76,12 +68,10 @@
 
         .btn-purple:hover {
             background-color: var(--purple-hover);
-            /* Slight lift effect on hover */
             transform: translateY(-3px);
             box-shadow: 0 10px 20px rgba(155, 89, 182, 0.3);
         }
 
-        /* Form Inputs - Purple focus state */
         .form-control {
             border-radius: 15px;
             border: 1px solid #e0d0e8;
@@ -93,7 +83,6 @@
         }
         .form-floating label { padding-left: 1rem; color: #a0a0a0; }
 
-        /* Links */
         .purple-link { color: var(--primary-purple); text-decoration: none; font-weight: 700; transition: color 0.2s; }
         .purple-link:hover { color: var(--purple-hover); text-decoration: underline; }
     </style>

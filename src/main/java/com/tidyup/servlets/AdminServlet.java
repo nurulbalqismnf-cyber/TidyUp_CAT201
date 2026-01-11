@@ -37,7 +37,7 @@ public class AdminServlet extends HttpServlet {
             String priceStr = req.getParameter("price");
             String desc = req.getParameter("description");
 
-            // Parse price safely
+            // examine price safely
             double price = 0.0;
             try {
                 price = Double.parseDouble(priceStr);

@@ -23,7 +23,6 @@ public class BookingServlet extends HttpServlet {
             price = 0.0;
         }
 
-        // This now works because we added the constructor to Booking.java!
         Booking newBooking = new Booking(customerName, serviceName, price);
         DataStore.getInstance().addBooking(newBooking);
 

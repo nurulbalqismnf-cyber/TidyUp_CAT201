@@ -15,10 +15,10 @@ public class SettingsServlet extends HttpServlet {
         String oldPass = req.getParameter("oldPassword");
         String newPass = req.getParameter("newPassword");
 
-        // 1. Ask DataStore to try and change the password
+        // Ask DataStore to try and change the password
         boolean isChanged = DataStore.getInstance().changePassword(oldPass, newPass);
 
-        // 2. Redirect based on result
+        // Redirect based on result
         if (isChanged) {
             // Success: Show green message
             resp.sendRedirect("settings.jsp?msg=success");

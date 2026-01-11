@@ -14,7 +14,6 @@ public class DashboardServlet extends HttpServlet {
             throws ServletException, IOException {
 
         // --- AUTO-CALCULATE LOGIC ---
-        // In a real app, you would get these numbers from a Database
         double totalRevenue = 12450.00;
         int reviewCount = 4;
         double avgRating = 4.9;
@@ -24,7 +23,7 @@ public class DashboardServlet extends HttpServlet {
         request.setAttribute("reviews", reviewCount);
         request.setAttribute("rating", avgRating);
 
-        // Forward to your aesthetic HTML file
+        // Forward to HTML file
         request.getRequestDispatcher("/admin/dashboard.html").forward(request, response);
     }
 }

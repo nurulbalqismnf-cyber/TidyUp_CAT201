@@ -5,10 +5,8 @@
     <title>Write a Review</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* --- FRIENDLY PURPLE THEME --- */
         body { background-color: #f8f0fc; font-family: 'Segoe UI', sans-serif; }
 
-        /* --- CONTENT WRAPPER ANIMATION --- */
         .main-content {
             margin-left: 0; /* Default Closed */
             padding: 2rem;
@@ -22,7 +20,6 @@
             min-height: 100vh;
         }
 
-        /* Open State */
         body.sidebar-open .main-content {
             margin-left: 260px;
         }

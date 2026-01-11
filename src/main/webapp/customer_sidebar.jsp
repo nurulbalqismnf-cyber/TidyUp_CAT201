@@ -1,32 +1,29 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <style>
-    /* 1. SIDEBAR - CLOSED BY DEFAULT */
     .sidebar {
         height: 100vh;
         width: 260px;
         position: fixed;
         top: 0;
-        left: -260px; /* Hidden off-screen */
+        left: -260px;
         background-color: #ffffff;
         padding-top: 2rem;
         box-shadow: 2px 0 15px rgba(0,0,0,0.05);
         z-index: 1000;
         display: flex;
         flex-direction: column;
-        transition: left 0.3s ease; /* Smooth slide animation */
+        transition: left 0.3s ease;
     }
 
-    /* 2. OPEN STATE (Triggered by JS) */
     body.sidebar-open .sidebar {
         left: 0; /* Slide in */
     }
 
-    /* 3. FLOATING TOGGLE BUTTON (Hamburger) */
     .btn-toggle-sidebar {
         position: fixed;
         top: 25px;
         left: 25px;
-        z-index: 1050; /* Stays above everything */
+        z-index: 1050;
         width: 45px;
         height: 45px;
         border: none;

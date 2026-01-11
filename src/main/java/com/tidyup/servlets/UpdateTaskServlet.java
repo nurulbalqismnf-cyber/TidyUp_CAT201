@@ -12,12 +12,12 @@ public class UpdateTaskServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("bookingId");
 
-        // 1. Mark as Success
+        // Mark as Success
         if(id != null) {
             DataStore.getInstance().updateBookingStatus(id, "Success");
         }
 
-        // 2. Redirect back to the SAME page you came from
+        // Redirect back to the same page
         String referer = req.getHeader("Referer");
         if(referer != null) {
             resp.sendRedirect(referer);

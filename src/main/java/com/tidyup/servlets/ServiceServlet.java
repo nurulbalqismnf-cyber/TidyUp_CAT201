@@ -14,7 +14,6 @@ public class ServiceServlet extends HttpServlet {
         String action = req.getParameter("action");
 
         if ("add".equals(action)) {
-            // ... (Your existing add code) ...
             String name = req.getParameter("name");
             String desc = req.getParameter("desc");
             double price = Double.parseDouble(req.getParameter("price"));
@@ -23,12 +22,10 @@ public class ServiceServlet extends HttpServlet {
             DataStore.getInstance().addService(newService);
 
         } else if ("delete".equals(action)) {
-            // ... (Your existing delete code) ...
             String id = req.getParameter("id");
             DataStore.getInstance().deleteService(id);
 
         } else if ("update".equals(action)) {
-            // --- NEW UPDATE LOGIC ---
             String id = req.getParameter("id");
             String name = req.getParameter("name");
             String desc = req.getParameter("desc");

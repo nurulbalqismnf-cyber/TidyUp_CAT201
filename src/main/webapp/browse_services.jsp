@@ -16,15 +16,13 @@
         }
         body { background-color: var(--light-purple-bg); font-family: 'Segoe UI', sans-serif; color: var(--dark-text); padding-bottom: 5rem; }
 
-        /* --- CONTENT WRAPPER ANIMATION --- */
         .main-content {
-            margin-left: 0; /* Default: Full Width */
+            margin-left: 0;
             padding: 2rem;
             width: 100%;
-            transition: margin-left 0.3s ease; /* Smooth push effect */
+            transition: margin-left 0.3s ease;
         }
 
-        /* When sidebar is open, push content right */
         body.sidebar-open .main-content {
             margin-left: 260px;
         }

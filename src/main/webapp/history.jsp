@@ -23,7 +23,6 @@
             color: var(--dark-text);
         }
 
-        /* --- CONTENT WRAPPER ANIMATION --- */
         .main-content {
             margin-left: 0; /* Default Closed */
             padding: 2rem;
@@ -31,7 +30,6 @@
             transition: margin-left 0.3s ease;
         }
 
-        /* Open State */
         body.sidebar-open .main-content {
             margin-left: 260px;
         }

@@ -39,7 +39,7 @@
                     <i class="fa-solid fa-star <%= i <= r.getRating() ? "star-filled" : "text-muted opacity-25" %>"></i>
                     <% } %>
                 </div>
-                <p class="text-muted italic">"<%= r.getComment() %>"</p>
+                <p class="text-muted italic">"<%= r.getMessage() %>"</p>
             </div>
         </div>
         <% } %>

@@ -10,7 +10,6 @@
     <style>
         body { margin: 0; padding: 0; overflow: hidden; font-family: 'Poppins', sans-serif; }
 
-        /* Consistent Content Wrapper */
         .page-content {
             background: linear-gradient(to bottom, #a0e9ff, #ffffff);
             height: 100vh;

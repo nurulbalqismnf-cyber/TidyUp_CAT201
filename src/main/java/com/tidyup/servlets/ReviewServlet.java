@@ -16,22 +16,22 @@ public class ReviewServlet extends HttpServlet {
         String user = (String) session.getAttribute("user");
         if(user == null) user = "Guest";
 
-        // 1. Get Data
+        // Get Data
         String bookingId = req.getParameter("bookingId");
         int rating = Integer.parseInt(req.getParameter("rating"));
         String message = req.getParameter("message");
         String date = java.time.LocalDate.now().toString();
 
-        // 2. Save the Review
+        // Save Review
         Review newReview = new Review(user, rating, message, date);
         DataStore.getInstance().addReview(newReview);
 
-        // 3. IMPORTANT: Mark this specific booking as 'Reviewed'
+        // Mark as 'Reviewed'
         if(bookingId != null && !bookingId.isEmpty()) {
             DataStore.getInstance().markBookingAsReviewed(bookingId);
         }
 
-        // 4. Go back to history
+        // Go back to history
         resp.sendRedirect("UserBookingServlet?action=history");
     }
 }

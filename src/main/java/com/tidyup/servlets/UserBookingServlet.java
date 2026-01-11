@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class UserBookingServlet extends HttpServlet {
 
-    // --- doGet: Handles "Viewing" (Service List or History) ---
+    // do get handles viewing (Service List or History)
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
@@ -44,14 +44,14 @@ public class UserBookingServlet extends HttpServlet {
             request.getRequestDispatcher("history.jsp").forward(request, response);
         }
         else if ("reviews".equals(action)) {
-            // 1. Get reviews from DataStore
+            // Get reviews from DataStore
             // (If you have a login system, you would filter this list by the current user)
             List<Review> reviewList = DataStore.getInstance().getReviews();
 
-            // 2. Send list to JSP
+            // Send list to jsp
             request.setAttribute("reviewList", reviewList);
 
-            // 3. Go to the new page
+            // Go to review page
             request.getRequestDispatcher("my_reviews.jsp").forward(request, response);
         }
 
@@ -62,7 +62,7 @@ public class UserBookingServlet extends HttpServlet {
         }
     }
 
-    // --- doPost: Handles "Submitting" a New Booking ---
+    // doPost handles submitting a New Booking
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
@@ -74,17 +74,13 @@ public class UserBookingServlet extends HttpServlet {
         }
 
         // Get form data
-        String formName = request.getParameter("userName"); // What user typed, e.g., "Farah"
+        String formName = request.getParameter("userName");
         String phone = request.getParameter("phone");
         String serviceName = request.getParameter("serviceName");
         String date = request.getParameter("date");
         String time = request.getParameter("time");
         String address = request.getParameter("address");
         String payment = request.getParameter("payment");
-
-        // --- THE FIX IS HERE ---
-        // OLD (Broken): new Booking(formName, ...) -> Saves as "Farah"
-        // NEW (Fixed):  new Booking(currentUser, ...) -> Saves as "Farah123"
 
         Booking newBooking = new Booking(currentUser, phone, serviceName, date, time, address, payment, "Pending");
 

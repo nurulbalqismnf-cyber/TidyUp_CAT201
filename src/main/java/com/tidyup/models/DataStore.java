@@ -11,7 +11,7 @@ public class DataStore {
     private List<Review> reviews; // Declared at the top with other lists
     private List<User> users;
 
-    // Admin Credentials
+    // Admin
     private String adminUsername;
     private String adminPassword;
 
@@ -35,7 +35,7 @@ public class DataStore {
         services.add(new Service("1", "Standard Cleaning", 100.0, "Basic cleaning package"));
         services.add(new Service("2", "Deep Cleaning", 250.0, "Thorough cleaning package"));
 
-        // Dummy Review Data - Placed inside the main constructor to avoid duplicates
+        // Dummy Review Data
         reviews.add(new Review("Farah Ummairah", 5, "Amazing service!", "2026-01-04"));
         reviews.add(new Review("Shakira Insyirah", 4, "Good, but slightly late.", "2026-01-03"));
 
@@ -45,7 +45,6 @@ public class DataStore {
         users.add(new User("Rabiatul123", "123", "customer"));
 
         // --- TEMPORARY TEST BOOKINGS ---
-        // --- 3. Dummy Bookings ---
 
         // Booking 1: Standard Cleaning (Price = 100.0)
         Booking b1 = new Booking("Farah123", "012-1234567", "Standard Cleaning", "2026-01-12", "10:00", "123 Test St", "Cash", "Pending");
@@ -58,7 +57,6 @@ public class DataStore {
         bookings.add(b2);
     }
 
-    // Add this anywhere inside the DataStore class
     public void markBookingAsReviewed(String bookingId) {
         for (Booking b : bookings) {
             if (b.getId().equals(bookingId)) {
@@ -68,7 +66,6 @@ public class DataStore {
         }
     }
 
-    // 2. Update an existing Service
     public void updateService(String id, String newName, double newPrice, String newDesc) {
         for (Service s : services) {
             if (s.getId().equals(id)) {
@@ -87,8 +84,7 @@ public class DataStore {
         return instance;
     }
 
-    // --- UNIFIED LOGIN METHOD ---
-    // This tells LoginServlet if it's the Admin or a Customer
+    // tells LoginServlet if it's the Admin or a Customer
     public String checkLogin(String user, String pass) {
         // 1. Check Admin
         if (adminUsername.equals(user) && adminPassword.equals(pass)) {
@@ -105,7 +101,6 @@ public class DataStore {
 
 
     // --- FILE SAVING METHODS ---
-
     private void saveCredentials() {
         try (PrintWriter out = new PrintWriter(new FileWriter(FILE_PATH))) {
             out.println(adminUsername);
@@ -164,7 +159,7 @@ public class DataStore {
         for (Booking b : bookings) if (b.getId().equals(id)) b.setStatus(s);
     }
 
-    // --- NEW: Allow signing up ---
+    // signing up ---
     public void addUser(User u) {
         this.users.add(u);
     }

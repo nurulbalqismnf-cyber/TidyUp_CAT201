@@ -14,13 +14,13 @@ public class RegisterServlet extends HttpServlet {
         String u = req.getParameter("username");
         String p = req.getParameter("password");
 
-        // 1. Create a new "Customer" user
+        // Create new user
         User newUser = new User(u, p, "customer");
 
-        // 2. Save it to our shared DataStore
+        // Save it to DataStore
         DataStore.getInstance().addUser(newUser);
 
-        // 3. Redirect to login with a success message
+        // go back to login page
         resp.sendRedirect("login.jsp?msg=registered");
     }
 }

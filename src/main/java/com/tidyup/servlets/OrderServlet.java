@@ -11,14 +11,14 @@ import java.io.IOException;
 @WebServlet("/orders")
 public class OrderServlet extends HttpServlet {
 
-    // 1. Handle GET requests (in case someone types /orders directly)
+    // Handle GET requests in case someone types/orders directly
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // Just show the JSP page
         req.getRequestDispatcher("orders.jsp").forward(req, resp);
     }
 
-    // 2. Handle POST requests (Button clicks)
+    // Handle POST requests (Button clicks)
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
@@ -33,7 +33,7 @@ public class OrderServlet extends HttpServlet {
             }
         }
 
-        // 3. SAFELY Redirect back to orders.jsp
+        // go back to orders.jsp
         resp.sendRedirect("orders.jsp");
     }
 }

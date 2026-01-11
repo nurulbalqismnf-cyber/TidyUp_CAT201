@@ -42,7 +42,6 @@
 
         .rating-stars { color: #f1c40f; letter-spacing: 2px; }
 
-        /* New: Badge for Verified Customer */
         .verified-badge {
             font-size: 0.75rem;
             color: #27ae60;

@@ -5,7 +5,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%
-    // Security and Revenue Logic
     double earnedRevenue = 0.0;
     double pendingRevenue = 0.0;
     int pendingCount = 0;
@@ -29,7 +28,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* MOVED GRADIENT TO CONTENT WRAPPER SO SIDEBAR STAYS WHITE */
         body { margin: 0; overflow: hidden; font-family: 'Poppins', sans-serif; }
 
         .nav-custom { background-color: #00d2ff; padding: 10px 20px; color: white; }
@@ -37,7 +35,6 @@
         .module-card { background: white; border-radius: 20px; border: none; box-shadow: 0 10px 20px rgba(0,0,0,0.05); transition: 0.3s; }
         .module-card:hover { transform: translateY(-5px); }
 
-        /* CONTENT WRAPPER FOR SCROLLING */
         .content-scrollable {
             height: 100vh;
             overflow-y: auto;
@@ -209,16 +206,10 @@
         </div> </div> </div>
 
 <script>
-    // --- 1. THE UPDATED DISSOLVE FUNCTION ---
     function dissolveRow(checkbox) {
-        // Find the row
         var row = checkbox.closest("tr");
-
-        // Extract the ID from the row's HTML ID (e.g., "row_123" -> "123")
         var bookingId = row.id.split('_')[1];
 
-        // --- STEP A: Send Request to Server ---
-        // This silently tells the 'orders' servlet to mark it as complete
         fetch('orders', {
             method: 'POST',
             headers: {
@@ -226,29 +217,24 @@
             },
             body: 'action=complete&id=' + bookingId
         }).then(response => {
-            // Optional: You could check response.ok here, but for now we assume it works
             console.log("Status updated for ID: " + bookingId);
         });
 
-        // --- STEP B: Visual Effect (Dissolve) ---
         row.style.transition = "all 0.5s ease";
         row.style.opacity = "0";
         row.style.transform = "translateX(20px)";
 
-        // Update the "Pending Jobs" counter at the top immediately
         var counter = document.getElementById("pendingCountDisplay");
         var currentCount = parseInt(counter.innerText);
         if (currentCount > 0) {
             counter.innerText = currentCount - 1;
         }
 
-        // Wait 0.5s then remove from HTML
         setTimeout(function() {
             row.remove();
         }, 500);
     }
 
-    // --- 2. Revenue Growth Chart ---
     const ctxLine = document.getElementById('revenueChart').getContext('2d');
     new Chart(ctxLine, {
         type: 'line',
@@ -266,7 +252,6 @@
         options: { responsive: true, plugins: { legend: { display: false } } }
     });
 
-    // --- 3. Service Popularity Chart ---
     const ctxPie = document.getElementById('servicePieChart').getContext('2d');
     new Chart(ctxPie, {
         type: 'doughnut',

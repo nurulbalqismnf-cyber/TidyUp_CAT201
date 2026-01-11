@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <style>
-    /* 1. Sidebar Styling */
     #sidebar-wrapper {
         min-width: 250px;
         max-width: 250px;
@@ -14,18 +13,15 @@
         border-right: 1px solid #eee;
     }
 
-    /* 2. Collapsed State: Starts with Width 0 */
     #sidebar-wrapper.collapsed {
         min-width: 0;
         max-width: 0;
     }
 
-    /* Hide content immediately when collapsed so text doesn't squish */
     #sidebar-wrapper.collapsed * {
         display: none;
     }
 
-    /* Link Styling */
     .nav-link { color: #333; font-weight: 500; padding: 12px 20px; transition: 0.2s; display: flex; align-items: center; }
     .nav-link:hover { background-color: #f0f4f8; color: #6a11cb; text-decoration: none; }
     .nav-link i { width: 30px; font-size: 1.1rem; }
@@ -48,14 +44,14 @@
     </ul>
 
     <div class="p-3 border-top mt-auto">
-        <div class="dropdown">
-            <a href="#" class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown">
-                <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
-                <strong>Admin</strong>
-            </a>
-            <ul class="dropdown-menu text-small shadow">
-                <li><a class="dropdown-item" href="logout">Sign out</a></li>
-            </ul>
+        <div class="d-flex align-items-center text-decoration-none">
+
+            <div class="d-flex align-items-center justify-content-center bg-secondary text-white rounded-circle me-2" style="width: 32px; height: 32px;">
+                <i class="fa-solid fa-user"></i>
+            </div>
+
+            <strong class="text-dark">Admin</strong>
+
         </div>
     </div>
 </div>

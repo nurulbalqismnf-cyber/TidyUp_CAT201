@@ -15,29 +15,29 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // 1. Capture the form data
+        // retrieve data
         String username = req.getParameter("username");
         String password = req.getParameter("password");
 
-        // 2. Ask DataStore to check if this user exists (Admin OR Customer)
-        // This uses the unified checkLogin method we created in DataStore
+        // check if this user exists (Admin OR Customer)
+        // uses checkLogin method in DataStore
         String role = DataStore.getInstance().checkLogin(username, password);
 
         if (role != null) {
             // --- LOGIN SUCCESS ---
 
-            // Create a Session (This is better than Cookies for security)
+            // Create a Session
             HttpSession session = req.getSession();
             session.setAttribute("user", username);
             session.setAttribute("role", role);
 
-            // 3. Redirect based on Role
+            // Redirect based on Role
             if ("admin".equals(role)) {
                 // Admin goes to the Dashboard
                 System.out.println("Login: Admin detected. Redirecting to dashboard.");
                 resp.sendRedirect("dashboard.jsp");
             } else {
-                // Customers go to the Booking Page (Member 2's feature)
+                // Customers go to the Booking Page
                 System.out.println("Login: Customer detected. Redirecting to Booking Service.");
                 resp.sendRedirect("UserBookingServlet");
             }
