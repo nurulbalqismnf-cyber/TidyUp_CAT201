@@ -209,12 +209,28 @@
         </div> </div> </div>
 
 <script>
-    // --- 1. THE DISSOLVE FUNCTION ---
+    // --- 1. THE UPDATED DISSOLVE FUNCTION ---
     function dissolveRow(checkbox) {
         // Find the row
         var row = checkbox.closest("tr");
 
-        // Visual Effect
+        // Extract the ID from the row's HTML ID (e.g., "row_123" -> "123")
+        var bookingId = row.id.split('_')[1];
+
+        // --- STEP A: Send Request to Server ---
+        // This silently tells the 'orders' servlet to mark it as complete
+        fetch('orders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'action=complete&id=' + bookingId
+        }).then(response => {
+            // Optional: You could check response.ok here, but for now we assume it works
+            console.log("Status updated for ID: " + bookingId);
+        });
+
+        // --- STEP B: Visual Effect (Dissolve) ---
         row.style.transition = "all 0.5s ease";
         row.style.opacity = "0";
         row.style.transform = "translateX(20px)";

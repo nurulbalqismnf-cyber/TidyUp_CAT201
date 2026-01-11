@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: USER
-  Date: 1/5/2026
-  Time: 10:47 PM
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page import="java.util.List" %>
 <%@ page import="com.tidyup.models.Service" %>
 <!DOCTYPE html>
@@ -22,8 +15,20 @@
             --soft-shadow: 0 10px 30px rgba(155, 89, 182, 0.1);
         }
         body { background-color: var(--light-purple-bg); font-family: 'Segoe UI', sans-serif; color: var(--dark-text); padding-bottom: 5rem; }
-        .page-header { background: white; padding: 2rem 0; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 3rem; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; }
-        h2.purple-heading { color: var(--primary-purple); font-weight: 800; }
+
+        /* --- CONTENT WRAPPER ANIMATION --- */
+        .main-content {
+            margin-left: 0; /* Default: Full Width */
+            padding: 2rem;
+            width: 100%;
+            transition: margin-left 0.3s ease; /* Smooth push effect */
+        }
+
+        /* When sidebar is open, push content right */
+        body.sidebar-open .main-content {
+            margin-left: 260px;
+        }
+
         .service-card { border: none; border-radius: 25px; box-shadow: var(--soft-shadow); transition: all 0.3s ease; background: white; height: 100%; }
         .service-card:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(155, 89, 182, 0.2); }
         .card-body { padding: 2rem; }
@@ -32,99 +37,80 @@
         .form-control:focus, .form-select:focus { border-color: var(--primary-purple); box-shadow: 0 0 0 0.2rem rgba(155, 89, 182, 0.15); }
         .btn-purple { background-color: var(--primary-purple); color: white; border: none; border-radius: 50px; padding: 12px; font-weight: 700; width: 100%; transition: all 0.2s; }
         .btn-purple:hover { background-color: var(--purple-hover); transform: scale(1.02); }
-        .btn-outline-purple { color: var(--primary-purple); border: 2px solid var(--primary-purple); border-radius: 50px; padding: 8px 20px; font-weight: 700; background: transparent; text-decoration: none; }
-        .btn-outline-purple:hover { background-color: var(--primary-purple); color: white; }
     </style>
 </head>
 <body>
 
-<div class="d-flex justify-content-between align-items-center mb-5 bg-white p-4 rounded-4 shadow-sm">
+<jsp:include page="customer_sidebar.jsp" />
 
-    <div>
-        <h2 class="fw-bold" style="color: #764ba2;">Available Services</h2>
+<div class="main-content">
+
+    <div class="mb-5 bg-white p-4 rounded-4 shadow-sm border-0 ps-5">
+        <h2 class="fw-bold m-0 ps-4" style="color: #764ba2;">Available Services</h2>
+        <p class="text-muted small m-0 ps-4">Book your next cleaning session</p>
     </div>
 
-    <div class="d-flex gap-2">
+    <div class="container-fluid">
+        <div class="row g-4">
+            <%
+                List<Service> services = (List<Service>) request.getAttribute("serviceList");
+                if (services != null) {
+                    for (Service s : services) {
+            %>
+            <div class="col-md-4">
+                <div class="card service-card">
+                    <div class="card-body">
+                        <h4 class="fw-bold mb-2" style="color: #4a4a4a;"><%= s.getName() %></h4>
+                        <p class="text-muted small mb-3"><%= s.getDescription() %></p>
+                        <div class="price-tag">RM <%= s.getPrice() %></div>
 
-        <a href="UserBookingServlet?action=history"
-           class="btn fw-bold"
-           style="border: 2px solid #764ba2; color: #764ba2; background: white; border-radius: 20px; padding: 8px 20px; transition: 0.3s;"
-           onmouseover="this.style.background='#764ba2'; this.style.color='white';"
-           onmouseout="this.style.background='white'; this.style.color='#764ba2';">
-            View My History
-        </a>
+                        <form action="UserBookingServlet" method="post" class="mt-3">
+                            <input type="hidden" name="serviceName" value="<%= s.getName() %>">
 
-        <a href="UserBookingServlet?action=logout"
-           class="btn fw-bold"
-           style="border: 2px solid #764ba2; color: #764ba2; background: white; border-radius: 20px; padding: 8px 20px; transition: 0.3s;"
-           onmouseover="this.style.background='#764ba2'; this.style.color='white';"
-           onmouseout="this.style.background='white'; this.style.color='#764ba2';">
-            Logout
-        </a>
-    </div>
-
-</div>
-
-<div class="container">
-    <div class="row g-4">
-        <%
-            List<Service> services = (List<Service>) request.getAttribute("serviceList");
-            if (services != null) {
-                for (Service s : services) {
-        %>
-        <div class="col-md-4">
-            <div class="card service-card">
-                <div class="card-body">
-                    <h4 class="fw-bold mb-2" style="color: #4a4a4a;"><%= s.getName() %></h4>
-                    <p class="text-muted small mb-3"><%= s.getDescription() %></p>
-                    <div class="price-tag">RM <%= s.getPrice() %></div>
-
-                    <form action="UserBookingServlet" method="post" class="mt-3">
-                        <input type="hidden" name="serviceName" value="<%= s.getName() %>">
-
-                        <div class="row g-2">
-                            <div class="col-12">
-                                <label class="small text-muted fw-bold ms-1">Full Name</label>
-                                <input type="text" name="userName" class="form-control" placeholder="Your Name" required>
+                            <div class="row g-2">
+                                <div class="col-12">
+                                    <label class="small text-muted fw-bold ms-1">Full Name</label>
+                                    <input type="text" name="userName" class="form-control" placeholder="Your Name" required>
+                                </div>
+                                <div class="col-12">
+                                    <label class="small text-muted fw-bold ms-1">Phone Number</label>
+                                    <input type="tel" name="phone" class="form-control" placeholder="012-3456789" required>
+                                </div>
                             </div>
-                            <div class="col-12">
-                                <label class="small text-muted fw-bold ms-1">Phone Number</label>
-                                <input type="tel" name="phone" class="form-control" placeholder="012-3456789" required>
+
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <label class="small text-muted fw-bold ms-1">Date</label>
+                                    <input type="date" name="date" class="form-control" required>
+                                </div>
+                                <div class="col-6">
+                                    <label class="small text-muted fw-bold ms-1">Time</label>
+                                    <input type="time" name="time" class="form-control" required>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <label class="small text-muted fw-bold ms-1">Date</label>
-                                <input type="date" name="date" class="form-control" required>
-                            </div>
-                            <div class="col-6">
-                                <label class="small text-muted fw-bold ms-1">Time</label>
-                                <input type="time" name="time" class="form-control" required>
-                            </div>
-                        </div>
+                            <label class="small text-muted fw-bold ms-1">Address</label>
+                            <input type="text" name="address" class="form-control" placeholder="Unit, Street, Area..." required>
 
-                        <label class="small text-muted fw-bold ms-1">Address</label>
-                        <input type="text" name="address" class="form-control" placeholder="Unit, Street, Area..." required>
+                            <label class="small text-muted fw-bold ms-1">Payment Method</label>
+                            <select name="payment" class="form-select">
+                                <option value="Cash">Cash on Delivery</option>
+                                <option value="DuitNow/QR">DuitNow / QR Pay</option>
+                                <option value="Credit Card">Credit / Debit Card</option>
+                            </select>
 
-                        <label class="small text-muted fw-bold ms-1">Payment Method</label>
-                        <select name="payment" class="form-select">
-                            <option value="Cash">Cash on Delivery</option>
-                            <option value="DuitNow/QR">DuitNow / QR Pay</option>
-                            <option value="Credit Card">Credit / Debit Card</option>
-                        </select>
-
-                        <button type="submit" class="btn btn-purple mt-3">Book Now</button>
-                    </form>
+                            <button type="submit" class="btn btn-purple mt-3">Book Now</button>
+                        </form>
+                    </div>
                 </div>
             </div>
+            <%
+                }
+            } else {
+            %>
+            <div class="col-12 text-center text-muted">No services found. (Run via Servlet)</div>
+            <% } %>
         </div>
-        <%
-            }
-        } else {
-        %>
-        <div class="col-12 text-center text-muted">No services found. (Run via Servlet)</div>
-        <% } %>
     </div>
 </div>
 
