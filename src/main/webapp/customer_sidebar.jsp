@@ -99,13 +99,13 @@
             </a>
         </li>
         <li>
-            <a href="UserBookingServlet?action=history" class="sidebar-link">
-                <i class="fa-solid fa-clock-rotate-left"></i> My History
+            <a href="UserBookingServlet?action=reviews" class="sidebar-link">
+                <i class="fa-solid fa-comments"></i> Customer Reviews
             </a>
         </li>
         <li>
-            <a href="UserBookingServlet?action=reviews" class="sidebar-link">
-                <i class="fa-solid fa-star"></i> My Reviews
+            <a href="UserBookingServlet?action=history" class="sidebar-link">
+                <i class="fa-solid fa-clock-rotate-left"></i> My History
             </a>
         </li>
     </ul>

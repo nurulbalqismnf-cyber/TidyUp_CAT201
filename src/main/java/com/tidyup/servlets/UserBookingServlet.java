@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import com.tidyup.models.Review;
 
 import java.io.IOException;
 import java.util.List;
@@ -41,7 +42,20 @@ public class UserBookingServlet extends HttpServlet {
 
             request.setAttribute("myBookings", myBookings);
             request.getRequestDispatcher("history.jsp").forward(request, response);
-        } else {
+        }
+        else if ("reviews".equals(action)) {
+            // 1. Get reviews from DataStore
+            // (If you have a login system, you would filter this list by the current user)
+            List<Review> reviewList = DataStore.getInstance().getReviews();
+
+            // 2. Send list to JSP
+            request.setAttribute("reviewList", reviewList);
+
+            // 3. Go to the new page
+            request.getRequestDispatcher("my_reviews.jsp").forward(request, response);
+        }
+
+        else {
             List<Service> serviceList = DataStore.getInstance().getServices();
             request.setAttribute("serviceList", serviceList);
             request.getRequestDispatcher("browse_services.jsp").forward(request, response);
@@ -52,14 +66,15 @@ public class UserBookingServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        String currentUser = (String) session.getAttribute("user");
+        String currentUser = (String) session.getAttribute("user"); // Example: "Farah123"
 
         if (currentUser == null) {
             response.sendRedirect("login.jsp");
             return;
         }
 
-        // 1. Get Form Data
+        // Get form data
+        String formName = request.getParameter("userName"); // What user typed, e.g., "Farah"
         String phone = request.getParameter("phone");
         String serviceName = request.getParameter("serviceName");
         String date = request.getParameter("date");
@@ -67,18 +82,12 @@ public class UserBookingServlet extends HttpServlet {
         String address = request.getParameter("address");
         String payment = request.getParameter("payment");
 
-        // 2. Create the Basic Booking (Price is 0.0 here)
+        // --- THE FIX IS HERE ---
+        // OLD (Broken): new Booking(formName, ...) -> Saves as "Farah"
+        // NEW (Fixed):  new Booking(currentUser, ...) -> Saves as "Farah123"
+
         Booking newBooking = new Booking(currentUser, phone, serviceName, date, time, address, payment, "Pending");
 
-        // 3. FIX: Find the correct price from DataStore and set it!
-        for (Service s : DataStore.getInstance().getServices()) {
-            if (s.getName().equals(serviceName)) {
-                newBooking.setPrice(s.getPrice()); // Set the real price (e.g., 100.0)
-                break;
-            }
-        }
-
-        // 4. Save to DataStore
         DataStore.getInstance().addBooking(newBooking);
 
         response.sendRedirect("UserBookingServlet?action=history");
